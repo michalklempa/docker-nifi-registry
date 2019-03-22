@@ -1,0 +1,9 @@
+Unofficial Docker Image For NiFi Registry
+Copyright 2019 Michal Klempa
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+This includes derived works from the Apache NiFi Registry (ASLv2 licensed) project (https://git-wip-us.apache.org/repos/asf?p=nifi-registry.git):
+  Copyright 2014-2018 The Apache Software Foundation
+  This includes sources for configuration, Dockerfile
