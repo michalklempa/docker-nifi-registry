@@ -13,9 +13,11 @@ ENV PROJECT_HOME ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}
 ENV UPSTREAM_BINARY_URL nifi/nifi-registry/nifi-registry-${UPSTREAM_VERSION}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz
 ENV DOCKERIZE_VERSION v0.6.1
 
-RUN apk update \
+RUN apk --update add --no-cache \
   &&   apk add --no-cache ca-certificates openssl curl wget \
-  &&   update-ca-certificates
+  &&   update-ca-certificates \
+  &&   rm -rf /var/lib/apt/lists/* \
+  &&   rm -f /var/cache/apk/*
 
 # Download, validate, and expand Apache NiFi-Registry binary.
 RUN mkdir -p ${PROJECT_BASE_DIR} \
@@ -62,9 +64,10 @@ ENV PROJECT_TEMPLATE_DIR ${PROJECT_BASE_DIR}/templates
 
 ENV PROJECT_CONF_DIR ${PROJECT_HOME}/conf
 
-RUN apk update \
-  && apk add --no-cache ca-certificates bash \
-  && update-ca-certificates
+RUN apk --update add --no-cache ca-certificates bash git less openssh sshpass \
+  && update-ca-certificates \
+  &&   rm -rf /var/lib/apt/lists/* \
+  &&   rm -f /var/cache/apk/*
 
 # Setup NiFi-Registry user
 RUN addgroup -g ${GID} nifi \
@@ -89,6 +92,7 @@ EXPOSE 18080 18443
 WORKDIR ${PROJECT_HOME}
 
 ENV FLOW_PROVIDER file
+ENV FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY $PROJECT_BASE_DIR/flow-storage
 
 # Apply configuration and start NiFi Registry
 CMD ${PROJECT_BASE_DIR}/scripts/start.sh
