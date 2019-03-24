@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    environment:
+      INITIAL_ADMIN_IDENTITY: cn=nifi-admin,dc=example,dc=org
+      NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER: kerberos-identity-provider
+      NIFI_REGISTRY_SECURITY_NEEDcLIENTaUTH: false

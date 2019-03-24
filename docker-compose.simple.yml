@@ -1,0 +1,10 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host

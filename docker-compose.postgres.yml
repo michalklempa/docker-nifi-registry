@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    depends_on:
+      - database
+    # see https://jdbc.postgresql.org/download.html
+    volumes:
+      - ./postgresql-42.2.5.jar:/opt/nifi-registry/libs/postgresql-42.2.5.jar
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    command: dockerize -timeout 60s -wait tcp://database:5432 /opt/nifi-registry/scripts/start.sh
+    networks:
+      - nifi-registry-network
+    environment:
+      NIFI_REGISTRY_DB_URL: jdbc:postgresql://database:5432/db
+      NIFI_REGISTRY_DB_DRIVER_CLASS: org.postgresql.Driver
+      NIFI_REGISTRY_DB_DRIVER_DIRECTORY: /opt/nifi-registry/libs/
+      NIFI_REGISTRY_DB_USERNAME: postgres
+      NIFI_REGISTRY_DB_PASSWORD: myPassword
+
+  # see https://hub.docker.com/_/postgres
+  # see https://flywaydb.org/documentation/database/postgresql
+  database:
+    image: postgres:10
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    networks:
+      - nifi-registry-network
+    volumes:
+      - type: bind
+        source: ./schema.sql
+        target: /docker-entrypoint-initdb.d/schema.sql
+    environment:
+      POSTGRES_PASSWORD: myPassword
+
+networks:
+  nifi-registry-network:
+    name: nifi-registry-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24

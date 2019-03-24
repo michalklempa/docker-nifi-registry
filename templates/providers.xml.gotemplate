@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<providers>
+    {{ if .Env.FLOW_PROVIDER }}
+    {{ if eq .Env.FLOW_PROVIDER "file" }}
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.FileSystemFlowPersistenceProvider</class>
+        <property name="Flow Storage Directory">{{ default .Env.FLOW_PROVIDER_FILE_FLOW_STORAGE_DIRECTORY "./flow_storage" }}</property>
+    </flowPersistenceProvider>
+    {{ end }}
+    {{ if eq .Env.FLOW_PROVIDER "git" }}
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.git.GitFlowPersistenceProvider</class>
+        <property name="Flow Storage Directory">{{ default .Env.FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY "./flow_storage" }}</property>
+        <property name="Remote To Push">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_TO_PUSH "" }}</property>
+        <property name="Remote Access User">{{ default .Env.FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER "" }}</property>
+        <property name="Remote Access Password">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD "" }}</property>
+    </flowPersistenceProvider>
+    {{ end }}
+    {{ end }}
+    <!--
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.FileSystemFlowPersistenceProvider</class>
+        <property name="Flow Storage Directory">./flow_storage</property>
+    </flowPersistenceProvider>
+    -->
+
+    <!--
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.git.GitFlowPersistenceProvider</class>
+        <property name="Flow Storage Directory">./flow_storage</property>
+        <property name="Remote To Push"></property>
+        <property name="Remote Access User"></property>
+        <property name="Remote Access Password"></property>
+    </flowPersistenceProvider>
+    -->
+
+    <!--
+    <eventHookProvider>
+    	<class>org.apache.nifi.registry.provider.hook.ScriptEventHookProvider</class>
+    	<property name="Script Path"></property>
+    	<property name="Working Directory"></property>
+    	-->
+    	<!-- Optional Whitelist Event types
+        <property name="Whitelisted Event Type 1">CREATE_FLOW</property>
+        <property name="Whitelisted Event Type 2">DELETE_FLOW</property>
+    	-->
+    <!--
+    </eventHookProvider>
+    -->
+
+    <!-- This will log all events to a separate file specified by the EVENT_APPENDER in logback.xml -->
+    <!--
+    <eventHookProvider>
+        <class>org.apache.nifi.registry.provider.hook.LoggingEventHookProvider</class>
+    </eventHookProvider>
+    -->
+
+</providers>
