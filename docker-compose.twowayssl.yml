@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    volumes:
+      - ./keystore.jks:/opt/certs/keystore.jks
+      - ./truststore.jks:/opt/certs/truststore.jks
+    ports:
+      - target: 18443
+        published: 18443
+        protocol: tcp
+        mode: host
+    environment:
+      NIFI_REGISTRY_SECURITY_KEYSTORE: /opt/certs/keystore.jks
+      NIFI_REGISTRY_SECURITY_KEYSTOREtYPE: JKS
+      NIFI_REGISTRY_SECURITY_KEYSTOREpASSWD: QKZv1hSWAFQYZ+WU1jjF5ank+l4igeOfQRp+OSbkkrs
+      NIFI_REGISTRY_SECURITY_TRUSTSTORE: /opt/certs/truststore.jks
+      NIFI_REGISTRY_SECURITY_TRUSTSTOREtYPE: JKS
+      NIFI_REGISTRY_SECURITY_TRUSTSTOREpASSWD: rHkWR1gDNW3R9hgbeRsT3OM3Ue0zwGtQqcFKJD2EXWE
+      NIFI_REGISTRY_SECURITY_NEEDcLIENTaUTH: true
+      NIFI_REGISTRY_WEB_HTTP_HOST:
+      NIFI_REGISTRY_WEB_HTTP_PORT:
+      NIFI_REGISTRY_WEB_HTTPS_HOST: 0.0.0.0
+      NIFI_REGISTRY_WEB_HTTPS_PORT: 18443
+      INITIAL_ADMIN_IDENTITY: CN=AdminUser, OU=nifi

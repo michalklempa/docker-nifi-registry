@@ -19,6 +19,39 @@ This README.md is trimmed by hub.docker.com. Full version:
 
 # See [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Unofficial Docker Image For NiFi Registry](#unofficial-docker-image-for-nifi-registry)
+- [See http://github.com/michalklempa/docker-nifi-registry/](#see-httpgithubcommichalklempadocker-nifi-registry)
+  - [Notice](#notice)
+  - [Capabilities](#capabilities)
+  - [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
+  - [Running a container](#running-a-container)
+    - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
+      - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
+    - [Standalone Instance, Two-Way SSL](#standalone-instance-two-way-ssl)
+      - [nifi-registry.properties](#nifi-registryproperties)
+      - [authorizers.xml](#authorizersxml)
+    - [Standalone Instance, LDAP](#standalone-instance-ldap)
+      - [nifi-registry.properties](#nifi-registryproperties-1)
+      - [identity-providers.xml](#identity-providersxml)
+    - [Standalone Instance, Kerberos](#standalone-instance-kerberos)
+      - [nifi-registry.properties](#nifi-registryproperties-2)
+      - [identity-providers.xml](#identity-providersxml-1)
+  - [Database configuration](#database-configuration)
+  - [Flow persistence provider configuration](#flow-persistence-provider-configuration)
+    - [FileSystemFlowPersistenceProvider (default)](#filesystemflowpersistenceprovider-default)
+    - [GitFlowPersistenceProvider](#gitflowpersistenceprovider)
+  - [Git cloning the repository at startup](#git-cloning-the-repository-at-startup)
+    - [Git user.name and user.email](#git-username-and-useremail)
+    - [Cloning using HTTPS](#cloning-using-https)
+    - [Cloning using GIT+SSH](#cloning-using-gitssh)
+  - [Building](#building)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Notice
 This image is inspired by the official image: [apache/nifi-registry](https://hub.docker.com/r/apache/nifi-registry).
 The configuration capabilities and options are taken from that image (see the copyright [NOTICE](NOTICE) and [LICENSE](LICENSE)).
@@ -62,7 +95,7 @@ These are described below.
 
 ## Running a container
 ### Standalone Instance, Unsecured
-The minimum to run a NiFi Registry instance is as follows:
+The minimum to run a NiFi Registry instance is as follows (compose: [docker-compose.simple.yml](docker-compose.simple.yml)):
 ```
     docker run --name nifi-registry \
       -p 18080:18080 \
@@ -100,6 +133,7 @@ In this configuration, the user will need to provide certificates and the associ
 The user must provide the DN as provided by an accessing client certificate in the `INITIAL_ADMIN_IDENTITY` environment variable.
 This value will be used to seed the instance with an initial user with administrative privileges.
 Finally, this command makes use of a volume to provide certificates on the host system to the container instance.
+This example as compose: [docker-compose.twowayssl.yml](docker-compose.twowayssl.yml)
 ```
     docker run --name nifi-registry \
       -v /path/to/tls/certs/localhost:/opt/certs \
@@ -149,6 +183,7 @@ if the LDAP provider of interest is operating in LDAPS or START_TLS modes, certi
 The user must provide a DN as provided by the configured LDAP server in the `INITIAL_ADMIN_IDENTITY` environment variable.
 This value will be used to seed the instance with an initial user with administrative privileges.
 Finally, this command makes use of a volume to provide certificates on the host system to the container instance.
+This example as compose: [docker-compose.ldap.yml](docker-compose.ldap.yml)
 
 For a minimal, connection to an LDAP server using SIMPLE authentication:
 ```
@@ -218,10 +253,11 @@ LDAP environment variables are rendered into `conf/identity-providers.xml` file 
 | Authentication Expiration       | LDAP_AUTHENTICATION_EXPIRATION | (no variable)                | 12 hours      | The duration of how long the user authentication is valid for. If the user never logs out, they will be required to log back in following this duration.                                                                                                                                                   |
 
 ### Standalone Instance, Kerberos
+This example as compose: [docker-compose.kerberos.yml](docker-compose.kerberos.yml)
 ```
     docker run --name nifi-registry \
       -v /path/to/tls/certs/localhost:/opt/certs \
-      -p 18443:18443 \
+      -p 18080:18080 \
       -e 'INITIAL_ADMIN_IDENTITY=cn=nifi-admin@EXAMPLE.ORG' \
       -e 'NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER=kerberos-identity-provider' \
       -e 'NIFI_REGISTRY_SECURITY_NEEDcLIENTaUTH=false' \
@@ -256,6 +292,7 @@ Kerberos environment variables are rendered into `conf/identity-providers.xml` f
 
 Although all the properties in `nifi-registry.properties` file are configurable using the basic name conversion schema described in [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties),
 we will provide database configuration properties and corresponding environmental variables listing here.
+This example as compose: [docker-compose.mariadb.yml](docker-compose.mariadb.yml).
 
 | nifi-registry.properties property | Environment variable              | Official image variable        | Default Value                                                                                                                                 | Description                                                                                                                                                                                                                                                                                       |
 |-----------------------------------|-----------------------------------|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -266,6 +303,25 @@ we will provide database configuration properties and corresponding environmenta
 | nifi.registry.db.password         | NIFI_REGISTRY_DB_PASSWORD         | ~~NIFI_REGISTRY_DB_PASS~~      | nifireg                                                                                                                                       | The password for the database. The default value is nifireg.                                                                                                                                                                                                                                      |
 | nifi.registry.db.maxConnections   | NIFI_REGISTRY_DB_MAXcONNECTIONS   | ~~NIFI_REGISTRY_DB_MAX_CONNS~~ | 5                                                                                                                                             | The max number of connections for the connection pool. The default value is 5.                                                                                                                                                                                                                    |
 | nifi.registry.db.sql.debug        | NIFI_REGISTRY_DB_SQL_DEBUG        | ~~NIFI_REGISTRY_DB_DEBUG_SQL~~ | false                                                                                                                                         | Whether or not enable debug logging for SQL statements. The default value is false.                                                                                                                                                                                                               |
+
+Example docker command:
+```
+    docker run --name nifi-registry \
+      -v ./mariadb-java-client-2.4.1.jar:/opt/nifi-registry/libs/mariadb-java-client-2.4.1.jar \
+      -p 18080:18080 \
+      -e 'NIFI_REGISTRY_DB_URL=jdbc:mariadb://localhost:3306/db' \
+      -e 'NIFI_REGISTRY_DB_DRIVER_CLASS=org.mariadb.jdbc.Driver' \
+      -e 'NIFI_REGISTRY_DB_DRIVER_DIRECTORY=/opt/nifi-registry/libs/' \
+      -e 'NIFI_REGISTRY_DB_USERNAME=root' \
+      -e 'NIFI_REGISTRY_DB_PASSWORD=myPassword' \
+      -d \
+      michalklempa/nifi-registry:latest
+```
+
+There are examples for various databases:
+- [docker-compose.postgres.yml](docker-compose.postgres.yml)
+- [docker-compose.mariadb.yml](docker-compose.mariadb.yml) - currently not working (see TODO JIRA-ISSUE)
+- [docker-compose.mysql.yml](docker-compose.mysql.yml) - currently not working (see TODO JIRA-ISSUE)
 
 ## Flow persistence provider configuration
 To select FileSystemFlowPersistenceProvider use environemnt variable:

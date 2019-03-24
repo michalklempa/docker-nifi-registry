@@ -1,0 +1,50 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    depends_on:
+      - database
+    # see https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/
+    volumes:
+      - ./mariadb-java-client-2.3.0.jar:/opt/nifi-registry/libs/mariadb-java-client-2.3.0.jar
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    command: dockerize -timeout 60s -wait tcp://database:3306 /opt/nifi-registry/scripts/start.sh
+    networks:
+      - nifi-registry-network
+    environment:
+      NIFI_REGISTRY_DB_URL: jdbc:mariadb://database:3306/db
+      NIFI_REGISTRY_DB_DRIVER_CLASS: org.mariadb.jdbc.Driver
+      NIFI_REGISTRY_DB_DRIVER_DIRECTORY: /opt/nifi-registry/libs/
+      NIFI_REGISTRY_DB_USERNAME: root
+      NIFI_REGISTRY_DB_PASSWORD: myPassword
+
+  # see https://hub.docker.com/_/mariadb
+  # see https://flywaydb.org/documentation/database/mariadb
+  database:
+    image: mariadb:10.3.9-bionic
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host
+    networks:
+      - nifi-registry-network
+    volumes:
+      - type: bind
+        source: ./mariadb_sql
+        target: /docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: myPassword
+
+networks:
+  nifi-registry-network:
+    name: nifi-registry-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24

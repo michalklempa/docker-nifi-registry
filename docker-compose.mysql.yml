@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    depends_on:
+      - database
+    # see https://dev.mysql.com/downloads/connector/j/
+    volumes:
+      - ./mysql-connector-java-5.1.47.jar:/opt/nifi-registry/libs/mysql-connector-java-5.1.47.jar
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    command: dockerize -timeout 60s -wait tcp://database:3306 /opt/nifi-registry/scripts/start.sh
+    networks:
+      - nifi-registry-network
+    environment:
+      NIFI_REGISTRY_DB_URL: jdbc:mysql://database:3306/db
+      NIFI_REGISTRY_DB_DRIVER_CLASS: com.mysql.jdbc.Driver
+      NIFI_REGISTRY_DB_DRIVER_DIRECTORY: /opt/nifi-registry/libs/
+      NIFI_REGISTRY_DB_USERNAME: root
+      NIFI_REGISTRY_DB_PASSWORD: myPassword
+
+  # see https://hub.docker.com/_/mysql?tab=description
+  # see https://flywaydb.org/documentation/database/mysql
+  database:
+    image: mysql:8
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host
+    networks:
+      - nifi-registry-network
+    environment:
+      MYSQL_ROOT_PASSWORD: myPassword
+      MYSQL_DATABASE: db
+
+networks:
+  nifi-registry-network:
+    name: nifi-registry-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
