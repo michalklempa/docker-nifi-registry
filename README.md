@@ -401,7 +401,9 @@ Image will run at startup. Credential helper hack (https://stackoverflow.com/a/4
 ```
 
 ### Cloning using GIT+SSH
-To clone repository using git+ssh scheme set these properties:
+To clone repository using git+ssh scheme either set these properties, or mount `.ssh` into `/home/nifi/.ssh`: 
+
+#### SSH keys using environemnt variables
 
 | Environment variable                     | Default Value                   | Description                                                                                                                                                                                                              |
 |------------------------------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -448,6 +450,25 @@ Image will run at startup:
     git clone -o $FLOW_PROVIDER_GIT_REMOTE_TO_PUSH -b $GIT_CHECKOUT_BRANCH $GIT_REMOTE_URL $FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY
     git config -f $FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY/.git/config 'user.name' $GIT_CONFIG_USER_NAME
     git config -f $FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY/.git/config 'user.email' $GIT_CONFIG_USER_EMAIL
+```
+
+#### SSH keys using mount point
+
+Another option to provide SSH key is to add a bind mount:
+
+```
+    docker run --name nifi-registry \
+      -p 18080:18080 \
+      -v ~/.ssh:/home/nifi/.ssh \
+      -e 'FLOW_PROVIDER=git' \
+      -e 'GIT_REMOTE_URL=git@github.com:michalklempa/docker-nifi-registry-example-flow.git' \
+      -e 'GIT_CHECKOUT_BRANCH=example' \
+      -e 'FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY=/opt/nifi-registry/flow-storage-git' \
+      -e 'FLOW_PROVIDER_GIT_REMOTE_TO_PUSH=origin' \
+      -e 'GIT_CONFIG_USER_NAME=Michal Klempa' \
+      -e 'GIT_CONFIG_USER_EMAIL=michal.klempa@gmail.com' \
+      -d \
+      michalklempa/nifi-registry:latest
 ```
 
 ## Building

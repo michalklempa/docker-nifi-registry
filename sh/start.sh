@@ -47,7 +47,7 @@ if [[ -n "$GIT_REMOTE_URL" ]]; then
         printf "%s\n" 'git config --global credential.${GIT_REMOTE_URL}.helper '\''!f() { sleep 1; echo -e "username=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER}\npassword=*****"; }; f'\'
         git config --global credential.${GIT_REMOTE_URL}.helper '!f() { sleep 1; echo -e "username=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER}\npassword=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD}"; }; f'
     fi
-    if [[ -n "SSH_PRIVATE_KEY_PASSPHRASE" ]]; then
+    if [[ -n "$SSH_PRIVATE_KEY_PASSPHRASE" ]]; then
         printf 'SSH_PRIVATE_KEY_PASSPHRASE is set, hacking git ssh command with sshpass\n'
         printf "%s\n" 'export GIT_SSH_COMMAND="sshpass -e -P'assphrase' ssh"'
         export GIT_SSH_COMMAND="sshpass -e -P'assphrase' ssh"

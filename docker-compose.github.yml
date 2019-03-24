@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  nifi-registry:
+    image: michalklempa/nifi-registry
+    volumes:
+      - ~/.ssh:/home/nifi/.ssh
+    ports:
+      - target: 18080
+        published: 18080
+        protocol: tcp
+        mode: host
+    environment:
+      DEBUG: 1
+      FLOW_PROVIDER: git
+      GIT_REMOTE_URL: git@github.com:michalklempa/docker-nifi-registry-example-flow.git
+      GIT_CHECKOUT_BRANCH: example
+      FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY: /opt/nifi-registry/flow-storage-git
+      FLOW_PROVIDER_GIT_REMOTE_TO_PUSH: origin
+      GIT_CONFIG_USER_NAME: 'Michal Klempa'
+      GIT_CONFIG_USER_EMAIL: michal.klempa@gmail.com
