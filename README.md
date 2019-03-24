@@ -23,32 +23,33 @@ This README.md is trimmed by hub.docker.com. Full version:
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Unofficial Docker Image For NiFi Registry](#unofficial-docker-image-for-nifi-registry)
-- [See http://github.com/michalklempa/docker-nifi-registry/](#see-httpgithubcommichalklempadocker-nifi-registry)
-  - [Notice](#notice)
-  - [Capabilities](#capabilities)
-  - [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
-  - [Running a container](#running-a-container)
-    - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
-      - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
-    - [Standalone Instance, Two-Way SSL](#standalone-instance-two-way-ssl)
-      - [nifi-registry.properties](#nifi-registryproperties)
-      - [authorizers.xml](#authorizersxml)
-    - [Standalone Instance, LDAP](#standalone-instance-ldap)
-      - [nifi-registry.properties](#nifi-registryproperties-1)
-      - [identity-providers.xml](#identity-providersxml)
-    - [Standalone Instance, Kerberos](#standalone-instance-kerberos)
-      - [nifi-registry.properties](#nifi-registryproperties-2)
-      - [identity-providers.xml](#identity-providersxml-1)
-  - [Database configuration](#database-configuration)
-  - [Flow persistence provider configuration](#flow-persistence-provider-configuration)
-    - [FileSystemFlowPersistenceProvider (default)](#filesystemflowpersistenceprovider-default)
-    - [GitFlowPersistenceProvider](#gitflowpersistenceprovider)
-  - [Git cloning the repository at startup](#git-cloning-the-repository-at-startup)
-    - [Git user.name and user.email](#git-username-and-useremail)
-    - [Cloning using HTTPS](#cloning-using-https)
-    - [Cloning using GIT+SSH](#cloning-using-gitssh)
-  - [Building](#building)
+- [Notice](#notice)
+- [Capabilities](#capabilities)
+- [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
+- [Running a container](#running-a-container)
+  - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
+    - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
+  - [Standalone Instance, Two-Way SSL](#standalone-instance-two-way-ssl)
+    - [nifi-registry.properties](#nifi-registryproperties)
+    - [authorizers.xml](#authorizersxml)
+  - [Standalone Instance, LDAP](#standalone-instance-ldap)
+    - [nifi-registry.properties](#nifi-registryproperties-1)
+    - [identity-providers.xml](#identity-providersxml)
+  - [Standalone Instance, Kerberos](#standalone-instance-kerberos)
+    - [nifi-registry.properties](#nifi-registryproperties-2)
+    - [identity-providers.xml](#identity-providersxml-1)
+- [Database configuration](#database-configuration)
+- [Flow persistence provider configuration](#flow-persistence-provider-configuration)
+  - [FileSystemFlowPersistenceProvider (default)](#filesystemflowpersistenceprovider-default)
+  - [GitFlowPersistenceProvider](#gitflowpersistenceprovider)
+- [Git cloning the repository at startup](#git-cloning-the-repository-at-startup)
+  - [Git user.name and user.email](#git-username-and-useremail)
+  - [Cloning using HTTPS](#cloning-using-https)
+  - [Cloning using GIT+SSH](#cloning-using-gitssh)
+    - [SSH keys using environemnt variables](#ssh-keys-using-environemnt-variables)
+    - [SSH keys using mount point](#ssh-keys-using-mount-point)
+- [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
+- [Building](#building)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -467,6 +468,30 @@ Another option to provide SSH key is to add a bind mount:
       -e 'FLOW_PROVIDER_GIT_REMOTE_TO_PUSH=origin' \
       -e 'GIT_CONFIG_USER_NAME=Michal Klempa' \
       -e 'GIT_CONFIG_USER_EMAIL=michal.klempa@gmail.com' \
+      -d \
+      michalklempa/nifi-registry:latest
+```
+You **must avoid** setting `SSH_PRIVATE_KEY`, setting this will trigger former behavior, thus rewriting your keys!
+
+## Providing configuration by mounting files
+
+In some environments, like `docker-compose`  or Kubernetes, it may be useful to provide
+configuration files directly from outside without modifications on them using environment variables.
+
+This setup is also supported under these cirmcumstances:
+1. `nifi-registry.properties` is templated from environmental variables iff any variable named NIFI_REGISTRY* is set
+2. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
+3. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
+4. `providers.xml` is templated iff `FLOW_PROVIDER` is set
+
+Example:
+```
+ docker run --name nifi-registry \
+      -p 18080:18080 \
+      -v ./conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
+      -v ./conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
+      -v ./conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
+      -v ./conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
       -d \
       michalklempa/nifi-registry:latest
 ```
