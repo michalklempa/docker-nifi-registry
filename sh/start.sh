@@ -41,7 +41,7 @@ if [[ -n "$SSH_PRIVATE_KEY" ]]; then
     echo -n ${SSH_KNOWN_HOSTS} | base64 -d > $SSH_KNOWN_HOSTS_FILE && chmod 600 $SSH_KNOWN_HOSTS_FILE
 fi
 
-if [[ -n "$GIT_REMOTE_URL" ]]; then
+if [[ -n "$GIT_REMOTE_URL" && ! -d "$FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY" ]]; then
     if [[ -n "$FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD" ]]; then
         echo "FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD is set, trying to set git credential helper for HTTPS password"
         printf "%s\n" 'git config --global credential.${GIT_REMOTE_URL}.helper '\''!f() { sleep 1; echo -e "username=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER}\npassword=*****"; }; f'\'
