@@ -1,4 +1,3 @@
-USE db;
 -- Licensed to the Apache Software Foundation (ASF) under one or more
 -- contributor license agreements.  See the NOTICE file distributed with
 -- this work for additional information regarding copyright ownership.
@@ -54,7 +53,7 @@ CREATE TABLE FLOW_SNAPSHOT (
 
 CREATE TABLE SIGNING_KEY (
     ID VARCHAR(50) NOT NULL,
-    TENANT_IDENTITY VARCHAR(1096) NOT NULL,
+    TENANT_IDENTITY VARCHAR(4096) NOT NULL,
     KEY_VALUE VARCHAR(50) NOT NULL,
     CONSTRAINT PK__SIGNING_KEY_ID PRIMARY KEY (ID),
     CONSTRAINT UNIQUE__SIGNING_KEY_TENANT_IDENTITY UNIQUE (TENANT_IDENTITY)
