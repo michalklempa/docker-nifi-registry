@@ -47,7 +47,8 @@ LABEL \
     org.label-schema.name="michalklempa/nifi-registry" \
     org.label-schema.description="michalklempa/nifi-registry docker image is an alternative and unofficial image for NiFi Registry project" \
     org.label-schema.url="https://hub.docker.com/r/michalklempa/nifi-registry" \
-    org.label-schema.docker.cmd="docker run -p 18080:18080 -d michalklempa/nifi-registry:latest" \
+    org.label-schema.docker.cmd="docker run -p 18080:18080 --name nifi-registry -d michalklempa/nifi-registry:latest" \
+    org.label-schema.docker.cmd.devel="docker run -p 8000:8000 -p 18080:18080 -e'BOOTSTRAP_JAVA_ARG_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000' --name nifi-registry -d michalklempa/nifi-registry:latest" \
     org.label-schema.version="$VERSION" \
     org.label-schema.vcs-url=$URL \
     org.label-schema.vcs-branch=$BRANCH \
