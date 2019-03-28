@@ -1,0 +1,51 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Java command to use when running nifi-registry
+java={{ default .Env.BOOTSTRAP_JAVA "java" }}
+
+# Username to use when running nifi-registry. This value will be ignored on Windows.
+run.as={{ default .Env.BOOTSTRAP_RUN_AS "" }}
+
+# Configure where nifi-registry's lib and conf directories live
+lib.dir={{ default .Env.BOOTSTRAP_LIB_DIR "./lib" }}
+conf.dir={{ default .Env.BOOTSTRAP_CONF_DIR "./conf" }}
+
+# How long to wait after telling nifi-registry to shutdown before explicitly killing the Process
+graceful.shutdown.seconds={{ default .Env.BOOTSTRAP_GRACEFUL_SHUTDOWN_SECONDS "20" }}
+
+# Disable JSR 199 so that we can use JSP's without running a JDK
+java.arg.1={{ default .Env.BOOTSTRAP_JAVA_ARG_1 "-Dorg.apache.jasper.compiler.disablejsr199=true" }}
+
+# JVM memory settings
+java.arg.2={{ default .Env.BOOTSTRAP_JAVA_ARG_2 "-Xms512m" }}
+java.arg.3={{ default .Env.BOOTSTRAP_JAVA_ARG_3 "-Xmx512m" }}
+
+# Enable Remote Debugging
+#java.arg.debug=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
+{{ if .Env.BOOTSTRAP_JAVA_ARG_DEBUG -}}
+java.arg.debug={{ .Env.BOOTSTRAP_JAVA_ARG_DEBUG }}
+{{- end }}
+
+java.arg.4={{ default .Env.BOOTSTRAP_JAVA_ARG_4 "-Djava.net.preferIPv4Stack=true" }}
+
+# allowRestrictedHeaders is required for Cluster/Node communications to work properly
+java.arg.5={{ default .Env.BOOTSTRAP_JAVA_ARG_5 "-Dsun.net.http.allowRestrictedHeaders=true" }}
+java.arg.6={{ default .Env.BOOTSTRAP_JAVA_ARG_6 "-Djava.protocol.handler.pkgs=sun.net.www.protocol" }}
+
+# Master key in hexadecimal format for encrypted sensitive configuration values
+nifi.registry.bootstrap.sensitive.key={{ default .Env.BOOTSTRAP_NIFI_REGISTRY_BOOTSTRAP_SENSITIVE_KEY "" }}

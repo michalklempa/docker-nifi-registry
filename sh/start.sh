@@ -71,6 +71,9 @@ if [[ -n "$GIT_REMOTE_URL" && ! -d "$FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY" ]
     done
 fi
 
+if [[ -n "${!BOOTSTRAP_*}" ]]; then
+    /usr/local/bin/dockerize -template ${PROJECT_TEMPLATE_DIR}/bootstrap.conf.gotemplate:${PROJECT_CONF_DIR}/bootstrap.conf
+fi
 if [[ -n "${!NIFI_REGISTRY*}" ]]; then
     /usr/local/bin/dockerize -template ${PROJECT_TEMPLATE_DIR}/nifi-registry.properties.gotemplate:${PROJECT_CONF_DIR}/nifi-registry.properties
 fi

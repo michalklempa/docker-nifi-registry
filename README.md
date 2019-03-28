@@ -94,7 +94,7 @@ Do not name your own environment variables with prefix `NIFI_REGISTRY`, they wil
 Image provides additional environmental variables to configure `authorizers.xml`, `identity-providers.xml` and `providers.xml`.
 These are described below.
 
-## Running a container
+## Running and configuring a container
 ### Standalone Instance, Unsecured
 The minimum to run a NiFi Registry instance is as follows (compose: [docker-compose.simple.yml](docker-compose.simple.yml)):
 ```
@@ -118,7 +118,32 @@ Unless you specify `NIFI_REGISTRY_WEB_HTTP_HOST`, NiFi Registry will bind to IP 
 thus listening on all available interfaces. This is different from official image - where the result of shell expression
 `$(hostname)` is supplied into `nifi.registry.web.http.host` property by default.
 
-#### NiFi Registry Listen Properties
+### Java Heap Options and other properties in bootstrap.conf
+
+To increase Java Heap Size or tune any other property in `bootstrap.conf` use environment
+variables prefixed with `BOOTSTRAP_`.
+```
+    docker run --name nifi-registry \
+      -p 18080:18080 \
+      -e 'BOOTSTRAP_JAVA_ARG_2=-Xms5012m' \
+      -e 'BOOTSTRAP_JAVA_ARG_3=-Xmx15512m' \
+      -d \
+      michalklempa/nifi-registry:latest
+```
+For details, read the [templates/bootstrap.conf.gotemplate](templates/bootstrap.conf.gotemplate) file.
+
+### Standalone Instance, Java Remote Debug
+To attach your IDE for Java Remote Debugging, run: 
+```
+    docker run --name nifi-registry \
+      -p 8000:8000 \
+      -p 18080:18080 \
+      -e'BOOTSTRAP_JAVA_ARG_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000' \
+      -d \
+      michalklempa/nifi-registry:latest
+```
+
+### NiFi Registry Listen Properties
 
 | nifi-registry.properties property | Environment variable         | Official image variable      | Default Value | Description                                                                                                               |
 |-----------------------------------|------------------------------|------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------|
@@ -483,15 +508,17 @@ This setup is also supported under these cirmcumstances:
 2. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
 3. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
 4. `providers.xml` is templated iff `FLOW_PROVIDER` is set
+5. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
 
 Example:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v ./conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
-      -v ./conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
-      -v ./conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
-      -v ./conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.3.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
       -d \
       michalklempa/nifi-registry:latest
 ```
@@ -530,3 +557,14 @@ $ docker build \
     -t michalklempa/nifi-registry:latest .
 ```
 There is, however, no guarantee that older versions will work as properties have changed and evolved with subsequent releases.
+
+## Contributing
+The `templates` were built:
+```
+./python/swapcase.py BOOTSTRAP_  < conf/bootstrap.conf > templates/bootstrap.conf.gotemplate
+```
+with optional prefix as arg to swapcase.py, so `nifi-registry.properties.gotemplate` was built:
+```
+./python/swapcase.py   < conf/nifi-registry.conf > templates/nifi-registry.conf.gotemplate
+```
+All other tepmlates were designed by hand.
