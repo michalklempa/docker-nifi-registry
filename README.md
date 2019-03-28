@@ -508,15 +508,17 @@ This setup is also supported under these cirmcumstances:
 2. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
 3. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
 4. `providers.xml` is templated iff `FLOW_PROVIDER` is set
+5. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
 
 Example:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v ./conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
-      -v ./conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
-      -v ./conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
-      -v ./conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.3.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
       -d \
       michalklempa/nifi-registry:latest
 ```
