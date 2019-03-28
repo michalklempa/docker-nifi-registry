@@ -26,9 +26,11 @@ This README.md is trimmed by hub.docker.com. Full version:
 - [Notice](#notice)
 - [Capabilities](#capabilities)
 - [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
-- [Running a container](#running-a-container)
+- [Running and configuring a container](#running-and-configuring-a-container)
   - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
-    - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
+  - [Java Heap Options and other properties in bootstrap.conf](#java-heap-options-and-other-properties-in-bootstrapconf)
+  - [Standalone Instance, Java Remote Debug](#standalone-instance-java-remote-debug)
+  - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
   - [Standalone Instance, Two-Way SSL](#standalone-instance-two-way-ssl)
     - [nifi-registry.properties](#nifi-registryproperties)
     - [authorizers.xml](#authorizersxml)
@@ -50,6 +52,7 @@ This README.md is trimmed by hub.docker.com. Full version:
     - [SSH keys using mount point](#ssh-keys-using-mount-point)
 - [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
 - [Building](#building)
+- [Contributing](#contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
