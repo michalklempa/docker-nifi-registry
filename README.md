@@ -433,6 +433,9 @@ Image will run at startup. Credential helper hack (https://stackoverflow.com/a/4
 To clone repository using git+ssh scheme either set these properties, or mount `.ssh` into `/home/nifi/.ssh`: 
 
 #### SSH keys using environemnt variables
+*Note*: At the time being, the `SSH_PRIVATE_KEY_PASSPHRASE` is used by image when cloning the git
+ repository. But NiFi Registry has limitation, that the private key must be password-less (see https://lists.apache.org/thread.html/357fb7938dd18cf17c12a15cf8aac77d95d67ec4c6d8fc6eae998915@%3Cusers.nifi.apache.org%3E).
+ Until NiFi Registry supports password-protected private keys, the option `SSH_PRIVATE_KEY_PASSPHRASE` is unusable.
 
 | Environment variable                     | Default Value                   | Description                                                                                                                                                                                                              |
 |------------------------------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -465,7 +468,7 @@ Example docker run command:
       -e 'GIT_CONFIG_USER_EMAIL=michal.klempa@gmail.com' \
       -e 'SSH_PRIVATE_KEY='$(base64 -w 0 < ~/.ssh/id_rsa) \
       -e 'SSH_KNOWN_HOSTS='$(base64 -w 0 < ~/.ssh/known_hosts_nifi_registry) \
-      -e 'SSH_PRIVATE_KEY_PASSPHRASE= ' \
+      -e 'SSH_PRIVATE_KEY_PASSPHRASE=' \
       -d \
       michalklempa/nifi-registry:latest
 ```
