@@ -1,5 +1,6 @@
 # nifi binaries
 nifi-registry-*-bin*
+nifi-registry-*-SNAPSHOT*
 *.jar
 
 # Created by https://www.gitignore.io/api/intellij+all
