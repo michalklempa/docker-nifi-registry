@@ -19,6 +19,10 @@ This README.md is trimmed by hub.docker.com. Full version:
 
 # See [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
 
+## Project home
+ - Image: [https://hub.docker.com/r/michalklempa/nifi-registry](https://hub.docker.com/r/michalklempa/nifi-registry)
+ - Source code: [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
