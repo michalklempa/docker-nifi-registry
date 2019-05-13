@@ -508,6 +508,50 @@ Another option to provide SSH key is to add a bind mount:
 ```
 You **must avoid** setting `SSH_PRIVATE_KEY`, setting this will trigger former behavior, thus rewriting your keys!
 
+## Bundle Persistence Providers configuration
+
+To select FileSystemBundlePersistenceProvider use environemnt variable:
+
+| Environment variable | Official image variable         | Possible values | Default Value | Description                                                                                                                                                                                                              |
+|----------------------|---------------------------------|-----------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| EXTENSION_BUNDLE_PROVIDER        | ~~NIFI_REGISTRY_BUNDLE_PROVIDER~~ | file, s3       | file          | Environment variable to discriminate which Bundle Extension Persistence Provider section to configure in `providers.xml`. Value `file` maps to `FileSystemBundlePersistenceProvider`, value `s3` maps to `S3BundlePersistenceProvider` |
+
+### FileSystemBundlePersistenceProvider (default)
+Configuring NiFi Registry FileSystemBundlePersistenceProvider needs just one variable:
+
+| providers.xml property             | Environment variable                                              | Official image variable            | Default Value                               | Description                                                                                                                                                                                                                                                                                                                                      |
+|------------------------------------|-------------------------------------------------------------------|------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Extension Bundle Storage Directory | EXTENSION_BUNDLE_PROVIDER_FILE_EXTENSION_BUNDLE_STORAGE_DIRECTORY | ~~NIFI_REGISTRY_BUNDLE_STORAGE_DIR~~ | /opt/nifi-registry/extension-bundle-storage | Default value is set by image, original default value was "./extension_bundles". REQUIRED: File system path for a directory where extension bundle contents files are persisted to. If the directory does not exist when NiFi Registry starts, it will be created. If the directory exists, it must be readable and writable from NiFi Registry. | 
+
+### S3BundlePersistenceProvider
+To configuring NiFi Registry S3BundlePersistenceProvider provide these variables:
+
+| providers.xml property | Environment variable                              | Official image variable                   | Default Value | Description                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+|------------------------|---------------------------------------------------|-------------------------------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Region                 | EXTENSION_BUNDLE_PROVIDER_S3_REGION               | ~~NIFI_REGISTRY_S3_REGION~~               | (empty)       | REQUIRED: The name of the S3 region where the bucket exists.                                                                                                                                                                                                                                                                                                                                                                                           |
+| Bucket Name            | EXTENSION_BUNDLE_PROVIDER_S3_BUCKET_NAME          | ~~NIFI_REGISTRY_S3_BUCKET_NAME~~          | (empty)       | REQUIRED: The name of an existing bucket to store extension bundles.                                                                                                                                                                                                                                                                                                                                                                                   |
+| Key Prefix             | EXTENSION_BUNDLE_PROVIDER_S3_KEY_PREFIX           | ~~NIFI_REGISTRY_S3_KEY_PREFIX~~           | (empty)       | An optional prefix that if specified will be added to the beginning of all S3 keys.                                                                                                                                                                                                                                                                                                                                                                    |
+| Credentials Provider   | EXTENSION_BUNDLE_PROVIDER_S3_CREDENTIALS_PROVIDER | ~~NIFI_REGISTRY_S3_CREDENTIALS_PROVIDER~~ | DEFAULT_CHAIN | REQUIRED: Indicates how credentials will be provided, must be a value of DEFAULT_CHAIN or STATIC. DEFAULT_CHAIN will consider in order: Java system properties, environment variables, credential profiles (~/.aws/credentials). STATIC requires that Access Key and Secret Access Key be specified directly in this file. For Docker image, using the DEFAULT_CHAIN probably does not make a sense. Use STATIC and provide access key and secret key. |
+| Access Key             | EXTENSION_BUNDLE_PROVIDER_S3_ACCESS_KEY           | ~~NIFI_REGISTRY_S3_ACCESS_KEY~~           | (empty)       | The access key to use when using STATIC credentials provider.                                                                                                                                                                                                                                                                                                                                                                                          |
+| Secret Access Key      | EXTENSION_BUNDLE_PROVIDER_S3_SECRET_ACCESS_KEY    | ~~NIFI_REGISTRY_S3_SECRET_ACCESS_KEY~~    | (empty)       | The secret access key to use when using STATIC credentials provider.                                                                                                                                                                                                                                                                                                                                                                                   |
+| Endpoint URL           | EXTENSION_BUNDLE_PROVIDER_S3_ENDPOINT_URL         | ~~NIFI_REGISTRY_S3_ENDPOINT_URL~~         | (empty)       | An optional URL that overrides the default AWS S3 endpoint URL. Set this when using an AWS S3 API compatible service hosted at a different URL.                                                                                                                                                                                                                                                                                                        |
+
+Please always provide values for all these variables. There are no reasonable defaults baked in the image.
+Example docker run command:
+```
+    docker run --name nifi-registry \
+      -p 18080:18080 \
+      -e 'EXTENSION_BUNDLE_PROVIDER=s3' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_REGION=eu-central-1' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_BUCKET_NAME=nifi-registry-extension-bundles' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_KEY_PREFIX=/bundles' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_CREDENTIALS_PROVIDER=static' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_ACCESS_KEY=AKIA239057ASLKJAGLKP' \
+      -e 'EXTENSION_BUNDLE_PROVIDER_S3_SECRET_ACCESS_KEY=KLASFnewewSDF932FSAKLJsda+SDFdskjgw+AFSK' \
+      -d \
+      michalklempa/nifi-registry:latest
+```
+
 ## Providing configuration by mounting files
 
 In some environments, like `docker-compose`  or Kubernetes, it may be useful to provide
@@ -578,3 +622,8 @@ with optional prefix as arg to swapcase.py, so `nifi-registry.properties.gotempl
 ./python/swapcase.py   < conf/nifi-registry.conf > templates/nifi-registry.conf.gotemplate
 ```
 All other tepmlates were designed by hand.
+
+Table of contents is generated using:
+```
+doctoc
+```
