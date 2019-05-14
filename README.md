@@ -54,6 +54,9 @@ This README.md is trimmed by hub.docker.com. Full version:
   - [Cloning using GIT+SSH](#cloning-using-gitssh)
     - [SSH keys using environemnt variables](#ssh-keys-using-environemnt-variables)
     - [SSH keys using mount point](#ssh-keys-using-mount-point)
+- [Bundle Persistence Providers configuration](#bundle-persistence-providers-configuration)
+  - [FileSystemBundlePersistenceProvider (default)](#filesystembundlepersistenceprovider-default)
+  - [S3BundlePersistenceProvider](#s3bundlepersistenceprovider)
 - [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
 - [Building](#building)
 - [Contributing](#contributing)
@@ -619,11 +622,11 @@ The `templates` were built:
 ```
 with optional prefix as arg to swapcase.py, so `nifi-registry.properties.gotemplate` was built:
 ```
-./python/swapcase.py   < conf/nifi-registry.conf > templates/nifi-registry.conf.gotemplate
+./python/swapcase.py   < conf/nifi-registry.properties > templates/nifi-registry.properties.gotemplate
 ```
 All other tepmlates were designed by hand.
 
 Table of contents is generated using:
 ```
-doctoc
+doctoc README.md
 ```

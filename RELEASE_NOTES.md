@@ -21,36 +21,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Notice](#notice)
-- [Capabilities](#capabilities)
-- [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
-- [Running and configuring a container](#running-and-configuring-a-container)
-  - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
-  - [Java Heap Options and other properties in bootstrap.conf](#java-heap-options-and-other-properties-in-bootstrapconf)
-  - [Standalone Instance, Java Remote Debug](#standalone-instance-java-remote-debug)
-  - [NiFi Registry Listen Properties](#nifi-registry-listen-properties)
-  - [Standalone Instance, Two-Way SSL](#standalone-instance-two-way-ssl)
-    - [nifi-registry.properties](#nifi-registryproperties)
-    - [authorizers.xml](#authorizersxml)
-  - [Standalone Instance, LDAP](#standalone-instance-ldap)
-    - [nifi-registry.properties](#nifi-registryproperties-1)
-    - [identity-providers.xml](#identity-providersxml)
-  - [Standalone Instance, Kerberos](#standalone-instance-kerberos)
-    - [nifi-registry.properties](#nifi-registryproperties-2)
-    - [identity-providers.xml](#identity-providersxml-1)
-- [Database configuration](#database-configuration)
-- [Flow persistence provider configuration](#flow-persistence-provider-configuration)
-  - [FileSystemFlowPersistenceProvider (default)](#filesystemflowpersistenceprovider-default)
-  - [GitFlowPersistenceProvider](#gitflowpersistenceprovider)
-- [Git cloning the repository at startup](#git-cloning-the-repository-at-startup)
-  - [Git user.name and user.email](#git-username-and-useremail)
-  - [Cloning using HTTPS](#cloning-using-https)
-  - [Cloning using GIT+SSH](#cloning-using-gitssh)
-    - [SSH keys using environemnt variables](#ssh-keys-using-environemnt-variables)
-    - [SSH keys using mount point](#ssh-keys-using-mount-point)
-- [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
-- [Building](#building)
-- [Contributing](#contributing)
+- [NiFi Registry 0.4.0-SNAPSHOT](#nifi-registry-040-snapshot)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

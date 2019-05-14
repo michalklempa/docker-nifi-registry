@@ -42,6 +42,12 @@ nifi.registry.security.identity.provider={{ default .Env.NIFI_REGISTRY_SECURITY_
 # providers properties #
 nifi.registry.providers.configuration.file={{ default .Env.NIFI_REGISTRY_PROVIDERS_CONFIGURATION_FILE "./conf/providers.xml" }}
 
+# registry alias properties #
+nifi.registry.registry.alias.configuration.file={{ default .Env.NIFI_REGISTRY_REGISTRY_ALIAS_CONFIGURATION_FILE "./conf/registry-aliases.xml" }}
+
+# extensions working dir #
+nifi.registry.extensions.working.directory={{ default .Env.NIFI_REGISTRY_EXTENSIONS_WORKING_DIRECTORY "./work/extensions" }}
+
 # legacy database properties, used to migrate data from original DB to new DB below
 # NOTE: Users upgrading from 0.1.0 should leave these populated, but new installs after 0.1.0 should leave these empty
 nifi.registry.db.directory={{ default .Env.NIFI_REGISTRY_DB_DIRECTORY "" }}
@@ -61,17 +67,64 @@ nifi.registry.db.sql.debug={{ default .Env.NIFI_REGISTRY_DB_SQL_DEBUG "false" }}
 # and a class loader will be created for each location, with the system class loader as the parent
 #
 #nifi.registry.extension.dir.1=/path/to/extension1
+{{ if .Env.NIFI_REGISTRY_EXTENSION_DIR_1 -}}
+nifi.registry.extension.dir.1={{ .Env.NIFI_REGISTRY_EXTENSION_DIR_1 }}
+{{- end }}
 #nifi.registry.extension.dir.2=/path/to/extension2
+{{ if .Env.NIFI_REGISTRY_EXTENSION_DIR_2 -}}
+nifi.registry.extension.dir.2={{ .Env.NIFI_REGISTRY_EXTENSION_DIR_2 }}
+{{- end }}
+
+nifi.registry.extension.dir.aws={{ default .Env.NIFI_REGISTRY_EXTENSION_DIR_AWS "./ext/aws/lib" }}
 
 # Identity Mapping Properties #
 # These properties allow normalizing user identities such that identities coming from different identity providers
 # (certificates, LDAP, Kerberos) can be treated the same internally in NiFi. The following example demonstrates normalizing
 # DNs from certificates and principals from Kerberos into a common identity string:
 #
-# nifi.registry.security.identity.mapping.pattern.dn=^CN=(.*?), OU=(.*?), O=(.*?), L=(.*?), ST=(.*?), C=(.*?)$
-# nifi.registry.security.identity.mapping.value.dn=$1@$2
-# nifi.registry.security.identity.mapping.pattern.kerb=^(.*?)/instance@(.*?)$
-# nifi.registry.security.identity.mapping.value.kerb=$1@$2
+#nifi.registry.security.identity.mapping.pattern.dn=^CN=(.*?), OU=(.*?), O=(.*?), L=(.*?), ST=(.*?), C=(.*?)$
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_PATTERN_DN -}}
+nifi.registry.security.identity.mapping.pattern.dn={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_PATTERN_DN }}
+{{- end }}
+#nifi.registry.security.identity.mapping.value.dn=$1@$2
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_VALUE_DN -}}
+nifi.registry.security.identity.mapping.value.dn={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_VALUE_DN }}
+{{- end }}
+#nifi.registry.security.identity.mapping.transform.dn=NONE
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_TRANSFORM_DN -}}
+nifi.registry.security.identity.mapping.transform.dn={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_TRANSFORM_DN }}
+{{- end }}
+
+#nifi.registry.security.identity.mapping.pattern.kerb=^(.*?)/instance@(.*?)$
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_PATTERN_KERB -}}
+nifi.registry.security.identity.mapping.pattern.kerb={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_PATTERN_KERB }}
+{{- end }}
+#nifi.registry.security.identity.mapping.value.kerb=$1@$2
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_VALUE_KERB -}}
+nifi.registry.security.identity.mapping.value.kerb={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_VALUE_KERB }}
+{{- end }}
+#nifi.registry.security.identity.mapping.transform.kerb=UPPER
+{{ if .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_TRANSFORM_KERB -}}
+nifi.registry.security.identity.mapping.transform.kerb={{ .Env.NIFI_REGISTRY_SECURITY_IDENTITY_MAPPING_TRANSFORM_KERB }}
+{{- end }}
+
+# Group Mapping Properties #
+# These properties allow normalizing group names coming from external sources like LDAP. The following example
+# lowercases any group name.
+#
+#nifi.registry.security.group.mapping.pattern.anygroup=^(.*)$
+{{ if .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_PATTERN_ANYGROUP -}}
+nifi.registry.security.group.mapping.pattern.anygroup={{ .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_PATTERN_ANYGROUP }}
+{{- end }}
+#nifi.registry.security.group.mapping.value.anygroup=$1
+{{ if .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_VALUE_ANYGROUP -}}
+nifi.registry.security.group.mapping.value.anygroup={{ .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_VALUE_ANYGROUP }}
+{{- end }}
+#nifi.registry.security.group.mapping.transform.anygroup=LOWER
+{{ if .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_TRANSFORM_ANYGROUP -}}
+nifi.registry.security.group.mapping.transform.anygroup={{ .Env.NIFI_REGISTRY_SECURITY_GROUP_MAPPING_TRANSFORM_ANYGROUP }}
+{{- end }}
+
 
 # kerberos properties #
 nifi.registry.kerberos.krb5.file={{ default .Env.NIFI_REGISTRY_KERBEROS_KRB5_FILE "" }}
