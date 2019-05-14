@@ -630,3 +630,16 @@ Table of contents is generated using:
 ```
 doctoc README.md
 ```
+
+## Building 0.4.0-SNAPSHOT
+Built from [48cce8bad0e9f7d1b42030ffe352179bdd0f7fc3](https://github.com/apache/nifi-registry/commit/48cce8bad0e9f7d1b42030ffe352179bdd0f7fc3):
+```
+docker build \
+  --build-arg VERSION=0.4.0-SNAPSHOT \
+  --build-arg COMMIT=$(git rev-parse HEAD) \
+  --build-arg URL=$(git config --get remote.origin.url) \
+  --build-arg BRANCH=$(git rev-parse --abbrev-ref HEAD) \
+  --build-arg DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  -f Dockerfile.master \
+  -t michalklempa/nifi-registry:0.4.0-SNAPSHOT .
+```
