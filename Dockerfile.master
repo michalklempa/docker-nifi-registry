@@ -1,4 +1,4 @@
-ARG UPSTREAM_VERSION=0.4.0-SNAPSHOT
+ARG UPSTREAM_VERSION=0.5.0-SNAPSHOT
 ARG MIRROR=https://archive.apache.org/dist
 
 # build phase

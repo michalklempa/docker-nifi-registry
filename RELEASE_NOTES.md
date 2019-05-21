@@ -21,11 +21,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [NiFi Registry 0.4.0-SNAPSHOT](#nifi-registry-040-snapshot)
+- [NiFi Registry 0.4.0](#nifi-registry-040)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
- 
-## NiFi Registry 0.4.0-SNAPSHOT 
- - Added templating for [Bundle Persistence Providers](README.md#bundle-persistence-providers-configuration)
- - 
+## NiFi Registry 0.4.0 
+ - Added templating for [Bundle Persistence Providers](README.md#bundle-persistence-providers-configuration) 
