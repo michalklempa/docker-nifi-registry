@@ -93,3 +93,4 @@ WORKDIR ${PROJECT_HOME}
 
 # Apply configuration and start NiFi Registry
 CMD ${PROJECT_BASE_DIR}/scripts/start.sh
+

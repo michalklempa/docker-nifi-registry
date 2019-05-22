@@ -102,3 +102,4 @@ RUN addgroup -g ${GID} nifi \
     && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
     && chown -R nifi:nifi ${PROJECT_BASE_DIR}
 USER nifi
+
