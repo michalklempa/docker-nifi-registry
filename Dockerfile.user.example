@@ -1,4 +1,4 @@
-FROM michalklempa/nifi-registry:0.4.0-02-root
+FROM michalklempa/nifi-registry:latest-root
 ARG UID=1000
 ARG GID=1000
 

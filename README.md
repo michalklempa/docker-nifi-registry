@@ -58,8 +58,12 @@ This README.md is trimmed by hub.docker.com. Full version:
   - [FileSystemBundlePersistenceProvider (default)](#filesystembundlepersistenceprovider-default)
   - [S3BundlePersistenceProvider](#s3bundlepersistenceprovider)
 - [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
+- [Running under different UID:GID](#running-under-different-uidgid)
+  - [Running as root](#running-as-root)
+  - [Running as custom UID:GID](#running-as-custom-uidgid)
 - [Building](#building)
 - [Contributing](#contributing)
+- [Building 0.5.0-SNAPSHOT](#building-050-snapshot)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -579,6 +583,47 @@ Example:
       -d \
       michalklempa/nifi-registry:latest
 ```
+
+## Running under different UID:GID
+By default, the images have user `nifi` with group `nifi` embedded under UID:GID of 1000:1000.
+This may cause problems when binding or mounting volumes to the container.
+Usually, one needs to have exacts same UID:GID on host machine as is used inside container.
+
+### Running as root
+You may want to run the image under `root` user, for this purpose, use the images labeled `-root`:
+```
+ docker run --name nifi-registry \
+      -p 18080:18080 \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.3.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
+      -d \
+      michalklempa/nifi-registry:latest-root
+```
+
+### Running as custom UID:GID
+To run using custom UID:GID (other than 1000:1000), you will have to build your own
+image, derived from this one.
+As an example, there is [Docker.user.example](Dockerfile.user.example) file in the repository, with contents:
+```
+FROM michalklempa/nifi-registry:latest-root
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup -g ${GID} nifi \
+    && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
+    && chown -R nifi:nifi ${PROJECT_BASE_DIR}
+USER nifi
+```
+
+This is derived from base image running under `root` privileges and adding the desired nifi user and group.
+To build such image, use this command:
+```
+docker build -f Dockerfile.user.example --build-arg UID=2006 --build-arg GID=2006 -t michalklempa/nifi-registry-custom-uid-gid:latest .
+```
+Change the numbers to whatever you need.
 
 ## Building
 The Docker image can be built using the following command:
