@@ -1,0 +1,8 @@
+FROM michalklempa/nifi-registry:0.4.0-02-root
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup -g ${GID} nifi \
+    && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
+    && chown -R nifi:nifi ${PROJECT_BASE_DIR}
+USER nifi

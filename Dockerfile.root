@@ -93,12 +93,3 @@ WORKDIR ${PROJECT_HOME}
 
 # Apply configuration and start NiFi Registry
 CMD ${PROJECT_BASE_DIR}/scripts/start.sh
-
-FROM final-root as final
-ARG UID=1000
-ARG GID=1000
-
-RUN addgroup -g ${GID} nifi \
-    && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
-    && chown -R nifi:nifi ${PROJECT_BASE_DIR}
-USER nifi
