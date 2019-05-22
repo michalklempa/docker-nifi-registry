@@ -32,7 +32,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 # final phase
-FROM openjdk:8-jdk-alpine as final
+FROM openjdk:8-jdk-alpine as final-root
 ARG BRANCH
 ARG COMMIT
 ARG DATE
@@ -54,8 +54,6 @@ LABEL \
     org.label-schema.vcs-branch=$BRANCH \
     org.label-schema.vcs-ref=$COMMIT
 
-ARG UID=1000
-ARG GID=1000
 ARG UPSTREAM_VERSION
 
 ENV PROJECT_BASE_DIR /opt/nifi-registry
@@ -71,9 +69,7 @@ RUN apk --update add --no-cache ca-certificates bash git less openssh sshpass \
   &&   rm -f /var/cache/apk/*
 
 # Setup NiFi-Registry user
-RUN addgroup -g ${GID} nifi \
-    && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
-    && mkdir -p ${PROJECT_BASE_DIR}
+RUN mkdir -p ${PROJECT_BASE_DIR}
 
 COPY --from=build ${PROJECT_HOME} ${PROJECT_HOME}
 COPY --from=build /usr/local/bin/dockerize /usr/local/bin/dockerize
@@ -83,14 +79,8 @@ COPY sh/ ${PROJECT_BASE_DIR}/scripts/
 
 RUN mkdir -p ${PROJECT_HOME}/docs
 
-RUN chown -R nifi:nifi ${PROJECT_BASE_DIR}
-
-USER nifi
-
 # Web HTTP(s) ports
 EXPOSE 18080 18443
-
-WORKDIR ${PROJECT_HOME}
 
 ENV FLOW_PROVIDER file
 ENV FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY $PROJECT_BASE_DIR/flow-storage
@@ -99,5 +89,16 @@ ENV FLOW_PROVIDER_FILE_FLOW_STORAGE_DIRECTORY $PROJECT_BASE_DIR/flow-storage
 ENV EXTENSION_BUNDLE_PROVIDER file
 ENV EXTENSION_BUNDLE_PROVIDER_FILE_EXTENSION_BUNDLE_STORAGE_DIRECTORY $PROJECT_BASE_DIR/extension-bundle-storage
 
+WORKDIR ${PROJECT_HOME}
+
 # Apply configuration and start NiFi Registry
 CMD ${PROJECT_BASE_DIR}/scripts/start.sh
+
+FROM final-root as final
+ARG UID=100
+ARG GID=1000
+
+RUN addgroup -g ${GID} nifi \
+    && adduser -s /bin/bash -u ${UID} -G nifi -D nifi \
+    && chown -R nifi:nifi ${PROJECT_BASE_DIR}
+USER nifi
