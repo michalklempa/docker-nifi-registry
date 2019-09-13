@@ -27,3 +27,6 @@
 
 ## NiFi Registry 0.4.0 
  - Added templating for [Bundle Persistence Providers](README.md#bundle-persistence-providers-configuration) 
+
+## NiFi Registry 0.5.0 
+ - Added templating for [org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider](README.md#) 

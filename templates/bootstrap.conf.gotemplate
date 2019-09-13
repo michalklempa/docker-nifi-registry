@@ -21,9 +21,15 @@ java={{ default .Env.BOOTSTRAP_JAVA "java" }}
 # Username to use when running nifi-registry. This value will be ignored on Windows.
 run.as={{ default .Env.BOOTSTRAP_RUN_AS "" }}
 
+# Configure the working directory for launching the NiFi Registry process
+# If not specified, the working directory will fall back to using the NIFI_REGISTRY_HOME env variable
+# If the environment variable is not specified, the working directory will fall back to the parent of this file's parent
+working.dir={{ default .Env.BOOTSTRAP_WORKING_DIR "" }}
+
 # Configure where nifi-registry's lib and conf directories live
 lib.dir={{ default .Env.BOOTSTRAP_LIB_DIR "./lib" }}
 conf.dir={{ default .Env.BOOTSTRAP_CONF_DIR "./conf" }}
+docs.dir={{ default .Env.BOOTSTRAP_DOCS_DIR "./docs" }}
 
 # How long to wait after telling nifi-registry to shutdown before explicitly killing the Process
 graceful.shutdown.seconds={{ default .Env.BOOTSTRAP_GRACEFUL_SHUTDOWN_SECONDS "20" }}
