@@ -36,6 +36,11 @@
         <property name="Remote Access Password">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD "" }}</property>
     </flowPersistenceProvider>
     {{ end }}
+    {{ if eq .Env.FLOW_PROVIDER "database" }}
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider</class>
+    </flowPersistenceProvider>
+    {{ end }}
     {{ end }}
 
     <!--
@@ -52,6 +57,12 @@
         <property name="Remote To Push"></property>
         <property name="Remote Access User"></property>
         <property name="Remote Access Password"></property>
+    </flowPersistenceProvider>
+    -->
+
+    <!--
+    <flowPersistenceProvider>
+        <class>org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider</class>
     </flowPersistenceProvider>
     -->
 

@@ -48,6 +48,7 @@ This README.md is trimmed by hub.docker.com. Full version:
 - [Flow persistence provider configuration](#flow-persistence-provider-configuration)
   - [FileSystemFlowPersistenceProvider (default)](#filesystemflowpersistenceprovider-default)
   - [GitFlowPersistenceProvider](#gitflowpersistenceprovider)
+  - [DatabaseFlowPersistenceProvider](#databaseflowpersistenceprovider)
 - [Git cloning the repository at startup](#git-cloning-the-repository-at-startup)
   - [Git user.name and user.email](#git-username-and-useremail)
   - [Cloning using HTTPS](#cloning-using-https)
@@ -364,11 +365,11 @@ There are examples for various databases:
 - [docker-compose.mysql.yml](docker-compose.mysql.yml) - currently not working (see TODO JIRA-ISSUE)
 
 ## Flow persistence provider configuration
-To select FileSystemFlowPersistenceProvider use environemnt variable:
+To select FlowPersistenceProvider use environemnt variable:
 
-| Environment variable | Official image variable         | Possible values | Default Value | Description                                                                                                                                                                                                              |
-|----------------------|---------------------------------|-----------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| FLOW_PROVIDER        | ~~NIFI_REGISTRY_FLOW_PROVIDER~~ | file, git       | file          | Environment variable to discriminate which Flow Persistence Provider section to configure in `providers.xml`. Value `file` maps to `FileSystemFlowPersistenceProvider`, value `git` maps to `GitFlowPersistenceProvider` |
+| Environment variable | Official image variable         | Possible values     | Default Value | Description                                                                                                                                                                                                                                                                          |
+|----------------------|---------------------------------|---------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| FLOW_PROVIDER        | ~~NIFI_REGISTRY_FLOW_PROVIDER~~ | file, git, database | file          | Environment variable to discriminate which Flow Persistence Provider section to configure in `providers.xml`. Value `file` maps to `FileSystemFlowPersistenceProvider`, value `git` maps to `GitFlowPersistenceProvider`, value `database` maps to `DatabaseFlowPersistenceProvider` |
 
 ### FileSystemFlowPersistenceProvider (default)
 Configuring NiFi Registry FileSystemFlowPersistenceProvider needs just one variable:
@@ -378,7 +379,7 @@ Configuring NiFi Registry FileSystemFlowPersistenceProvider needs just one varia
 | Flow Storage Directory | FLOW_PROVIDER_FILE_FLOW_STORAGE_DIRECTORY | ~~NIFI_REGISTRY_FLOW_STORAGE_DIR~~ | /opt/nifi-registry/flow-storage | Default value is set by image, original default value was "./flow-storage". REQUIRED: File system path for a directory where flow contents files are persisted to. If the directory does not exist when NiFi Registry starts, it will be created. If the directory exists, it must be readable and writable from NiFi Registry. |  |
 
 ### GitFlowPersistenceProvider
-To configuring NiFi Registry GitFlowPersistenceProvider provide these variables:
+To configure NiFi Registry [GitFlowPersistenceProvider](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#gitflowpersistenceprovider) provide these variables:
 
 | providers.xml property | Environment variable                     | Official image variable            | Default Value                   | Description                                                                                                                                                                                                                                                                                                                                                                                  |
 |------------------------|------------------------------------------|------------------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -386,6 +387,9 @@ To configuring NiFi Registry GitFlowPersistenceProvider provide these variables:
 | Remote To Push         | FLOW_PROVIDER_GIT_REMOTE_TO_PUSH         | ~~NIFI_REGISTRY_GIT_REMOTE~~       | (empty)                         | When a new flow snapshot is created, this persistence provider updated files in the specified Git directory, then create a commit to the local repository. If Remote To Push is defined, it also pushes to the specified remote repository. E.g. origin. To define more detailed remote spec such as branch names, use Refspec. See https://git-scm.com/book/en/v2/Git-Internals-The-Refspec |
 | Remote Access User     | FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER     | ~~NIFI_REGISTRY_GIT_USER~~         | (empty)                         | This user name is used to make push requests to the remote repository when Remote To Push is enabled, and the remote repository is accessed by HTTP protocol. If SSH is used, user authentication is done with SSH keys.                                                                                                                                                                     |
 | Remote Access Password | FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD | ~~NIFI_REGISTRY_GIT_PASSWORD~~     | (empty)                         | Used with Remote Access User.                                                                                                                                                                                                                                                                                                                                                                |
+
+### DatabaseFlowPersistenceProvider
+NiFi Registry [DatabaseFlowPersistenceProvider](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#databaseflowpersistenceprovider) currently does not need any additional configuration.                                                                                                                                                                                                                                                                                                                     |
 
 ## Git cloning the repository at startup
 This image is capable of cloning remote git repository at container startup, if the `FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY` does not exist.
@@ -575,11 +579,11 @@ Example:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.3.0/conf/bootstrap.conf \
-      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
-      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
-      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
-      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.5.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.5.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
       michalklempa/nifi-registry:latest
 ```
@@ -594,11 +598,11 @@ You may want to run the image under `root` user, for this purpose, use the image
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.3.0/conf/bootstrap.conf \
-      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.3.0/conf/nifi-registry.properties \
-      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/authorizers.xml \
-      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/identity-providers.xml \
-      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.3.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.5.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.5.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
       michalklempa/nifi-registry:latest-root
 ```
@@ -645,7 +649,7 @@ REPOSITORY                   TAG                 IMAGE ID            CREATED    
 michalklempa/nifi-registry   latest              945ff5472a69        11 hours ago        233MB
 ```
     
-**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.3.0).
+**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.5.0).
 To build an image for a prior released version, one can override the `UPSTREAM_VERSION` build-arg with the following command:
 ```
 $ docker build \
@@ -669,21 +673,21 @@ with optional prefix as arg to swapcase.py, so `nifi-registry.properties.gotempl
 ```
 ./python/swapcase.py   < conf/nifi-registry.properties > templates/nifi-registry.properties.gotemplate
 ```
-All other tepmlates were designed by hand.
+All other templates were designed by hand.
 
 Table of contents is generated using:
 ```
 doctoc README.md
 ```
-## Building 0.5.0-SNAPSHOT
-Built from [7e81b1a316fc2023d823407dd47a794e4991aedb](https://github.com/apache/nifi-registry/commit/7e81b1a316fc2023d823407dd47a794e4991aedb):
+## Building 1.0.0-SNAPSHOT
+Built from [32100bd5e5a49787acb1694cd9751dd1169e6fe7](https://github.com/apache/nifi-registry/commit/32100bd5e5a49787acb1694cd9751dd1169e6fe7):
 ```
 docker build \
-  --build-arg VERSION=0.5.0-SNAPSHOT \
+  --build-arg VERSION=1.0.0-SNAPSHOT \
   --build-arg COMMIT=$(git rev-parse HEAD) \
   --build-arg URL=$(git config --get remote.origin.url) \
   --build-arg BRANCH=$(git rev-parse --abbrev-ref HEAD) \
   --build-arg DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   -f Dockerfile.master \
-  -t michalklempa/nifi-registry:0.5.0-SNAPSHOT .
+  -t michalklempa/nifi-registry:1.0.0-SNAPSHOT .
 ```
