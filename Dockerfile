@@ -1,9 +1,13 @@
-ARG UPSTREAM_VERSION=0.5.0
-ARG MIRROR=https://archive.apache.org/dist
-
 # build phase
 FROM alpine:3.9 as build
 LABEL stage=build
+
+RUN apk --update add --no-cache \
+  &&   apk add --no-cache ca-certificates openssl curl wget \
+  &&   update-ca-certificates \
+  &&   rm -rf /var/lib/apt/lists/* \
+  &&   rm -f /var/cache/apk/*
+
 ARG UPSTREAM_VERSION
 ARG MIRROR
 
@@ -12,12 +16,6 @@ ENV PROJECT_HOME ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}
 
 ENV UPSTREAM_BINARY_URL nifi/nifi-registry/nifi-registry-${UPSTREAM_VERSION}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz
 ENV DOCKERIZE_VERSION v0.6.1
-
-RUN apk --update add --no-cache \
-  &&   apk add --no-cache ca-certificates openssl curl wget \
-  &&   update-ca-certificates \
-  &&   rm -rf /var/lib/apt/lists/* \
-  &&   rm -f /var/cache/apk/*
 
 # Download, validate, and expand Apache NiFi-Registry binary.
 RUN mkdir -p ${PROJECT_BASE_DIR} \
@@ -33,6 +31,12 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 # base phase
 FROM openjdk:8-jdk-alpine as base
+
+RUN apk --update add --no-cache ca-certificates bash git less openssh sshpass \
+  && update-ca-certificates \
+  &&   rm -rf /var/lib/apt/lists/* \
+  &&   rm -f /var/cache/apk/*
+
 ARG BUILD_RFC3339
 ARG COMMIT
 ARG VERSION
@@ -45,13 +49,13 @@ LABEL \
       org.opencontainers.image.documentation="https://github.com/michalklempa/docker-nifi-registry/blob/master/README.md" \
       org.opencontainers.image.description="michalklempa/nifi-registry docker image is an alternative and unofficial image for NiFi Registry project" \
       org.opencontainers.image.licenses="Apache-2.0" \
-      org.opencontainers.image.source=""https://github.com/michalklempa/docker-nifi-registry/" \
+      org.opencontainers.image.source="https://github.com/michalklempa/docker-nifi-registry/" \
       org.opencontainers.image.revision=$COMMIT \
       org.opencontainers.image.version=$VERSION \
       org.opencontainers.image.url="https://hub.docker.com/r/michalklempa/nifi-registry" \
       org.label-schema.schema-version="1.0" \
-      org.label-schema.docker.cmd="docker run -p 18080:18080 --name nifi-registry -d michalklempa/nifi-registry:latest" \
-      org.label-schema.docker.cmd.devel="docker run -p 8000:8000 -p 18080:18080 -e'BOOTSTRAP_JAVA_ARG_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000' --name nifi-registry -d michalklempa/nifi-registry:latest" \
+      org.label-schema.docker.cmd='docker run -p 18080:18080 --name nifi-registry -d michalklempa/nifi-registry:latest' \
+      org.label-schema.docker.cmd.devel='docker run -p 8000:8000 -p 18080:18080 -e''BOOTSTRAP_JAVA_ARG_DEBUG=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000'' --name nifi-registry -d michalklempa/nifi-registry:latest'
 
 ARG UPSTREAM_VERSION
 
@@ -61,11 +65,6 @@ ENV PROJECT_HOME ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}
 ENV PROJECT_TEMPLATE_DIR ${PROJECT_BASE_DIR}/templates
 
 ENV PROJECT_CONF_DIR ${PROJECT_HOME}/conf
-
-RUN apk --update add --no-cache ca-certificates bash git less openssh sshpass \
-  && update-ca-certificates \
-  &&   rm -rf /var/lib/apt/lists/* \
-  &&   rm -f /var/cache/apk/*
 
 # Setup NiFi-Registry user
 RUN mkdir -p ${PROJECT_BASE_DIR}

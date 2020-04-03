@@ -6,13 +6,20 @@
 # $IMAGE_NAME var is injected into the build so the tag is correct.
 echo "[***] Build hook running"
 
-TAG=`git describe --tag --match "v*"`
-FLAVOUR=`echo ${TAG} | awk -F'-' '{print $1}' | awk -F'.' '{print $2}'`
+if [[ -z "${TAG}" ]]; then
+    TAG=`git describe --tag --match "v*"`
+fi
+if [[ -z "${FLAVOUR}" ]]; then
+    FLAVOUR=`echo ${TAG} | awk -F'-' '{print $2}' | awk -F'.' '{print $2}'`
+fi
+UPSTREAM_VERSION=`echo ${TAG} | awk -F'-' '{print $1}'`
 
 docker build \
-    --build-arg BUILD_RFC3339=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+    --build-arg BUILD_RFC3339='"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"' \
     --build-arg COMMIT=$(git rev-parse --short HEAD) \
     --build-arg VERSION=$(git describe --tags --always) \
+    --build-arg UPSTREAM_VERSION=${UPSTREAM_VERSION:-0.5.0} \
+    --build-arg 'MIRROR='"${MIRROR:-https://archive.apache.org/dist}"'' \
     --target ${FLAVOUR:-defaultuser} \
     -f $DOCKERFILE_PATH \
     -t $IMAGE_NAME .
