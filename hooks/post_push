@@ -9,7 +9,8 @@ function add_tag() {
     docker push $DOCKER_REPO:$1
 }
 
-TAG=`git describe --tag --match "v*"`
+TAG=$DOCKER_TAG
+# `git describe --tag --match "v*"`
 
 # Optional Kill Switch for only pushing 'latest', not any prior release versions
 # -- comment this out if you want to always update release tags on every push (not recommended)
