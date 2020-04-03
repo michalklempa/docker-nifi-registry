@@ -605,7 +605,7 @@ You may want to run the image under `root` user, for this purpose, use the image
       -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
       -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:latest.default
+      michalklempa/nifi-registry:0.5.0-default
 ```
 
 ### Running as custom UID:GID
@@ -613,7 +613,7 @@ To run using custom UID:GID (other than 1000:1000), you will have to build your 
 image, derived from this one.
 As an example, there is [Docker.user.example](Dockerfile.user.example) file in the repository, with contents:
 ```
-FROM michalklempa/nifi-registry:latest.default
+FROM michalklempa/nifi-registry:0.5.0-default
 ARG UID=1000
 ARG GID=1000
 

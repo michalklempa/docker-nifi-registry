@@ -13,7 +13,7 @@ if [[ -z "${FLAVOUR}" ]]; then
 fi
 echo "Flavour 2: $FLAVOUR"
 
-UPSTREAM_VERSION=`echo ${DOCKER_TAG} | awk -F'-' '{print $1}'`
+UPSTREAM_VERSION=`echo ${DOCKER_TAG} | awk -F'-' '{print $1}' | sed 's/latest//'`
 echo "Upstream version: $UPSTREAM_VERSION"
 
 docker build \
