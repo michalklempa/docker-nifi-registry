@@ -21,7 +21,7 @@ This README.md is trimmed by hub.docker.com. Full version:
 
 ## Project home
  - Image: [https://hub.docker.com/r/michalklempa/nifi-registry](https://hub.docker.com/r/michalklempa/nifi-registry)
- - Source code: [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
+-  Source code: [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -78,9 +78,10 @@ and the runtime fork & logs capture is handled by [dockerize](https://github.com
 Image is based on [openjdk:8-jdk-alpine](https://hub.docker.com/_/openjdk).
 It is also smaller than the official one (251MB vs. 387MB).
 
-The configuration environment variables are different, so this image is not a drop-in replacement for the official one.
-Read the documentation below. We have included the original names in this readme for the convenience, but these are **NOT** supported by this image.
-Update your launch scripts accordingly. 
+The dockerhub hook scripts are attributed to [jnovack/dockerhub-hooks](https://github.com/jnovack/dockerhub-hooks).
+
+The configuration environment variables are different, so this image is not a drop-in replacement for the official one. Read the documentation below. We have included the original
+names in this readme for the convenience, but these are **NOT** supported by this image. Update your launch scripts accordingly.
 
 ## Capabilities
 This image currently supports running in standalone mode either unsecured or with user authentication provided through:
