@@ -30,3 +30,6 @@
 
 ## NiFi Registry 0.5.0 
  - Added templating for [org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider](README.md#) 
+
+## NiFi Registry 0.5.0 (0.5.0-03.plain and 0.5.0-03)
+ - Added -plain flavored images, these do not set UIG:GID (nifi:nifi) and do not render any config templates. Suitable for k8s deployments.

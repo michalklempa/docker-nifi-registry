@@ -30,6 +30,7 @@ This README.md is trimmed by hub.docker.com. Full version:
 - [Notice](#notice)
 - [Capabilities](#capabilities)
 - [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
+- [Templating conditions](#templating-conditions)
 - [Running and configuring a container](#running-and-configuring-a-container)
   - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
   - [Java Heap Options and other properties in bootstrap.conf](#java-heap-options-and-other-properties-in-bootstrapconf)
@@ -64,7 +65,8 @@ This README.md is trimmed by hub.docker.com. Full version:
   - [Running as custom UID:GID](#running-as-custom-uidgid)
 - [Building](#building)
 - [Contributing](#contributing)
-- [Building 0.5.0-SNAPSHOT](#building-050-snapshot)
+- [Building Release Candindates](#building-release-candindates)
+- [Building 1.0.0-SNAPSHOT](#building-100-snapshot)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
