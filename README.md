@@ -110,6 +110,14 @@ Do not name your own environment variables with prefix `NIFI_REGISTRY`, they wil
 Image provides additional environmental variables to configure `authorizers.xml`, `identity-providers.xml` and `providers.xml`.
 These are described below.
 
+##  Templating conditions
+1. `nifi-registry.properties` is templated from environmental variables iff any variable named NIFI_REGISTRY* is set
+3. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
+4. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
+5. `providers.xml` is templated iff `FLOW_PROVIDER` is set (this is always set by default, you have to set it to empty string). e.g. `-e 'FLOW_PROVIDER='`, see
+   https://github.com/michalklempa/docker-nifi-registry/issues/20).
+6. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
+
 ## Running and configuring a container
 ### Standalone Instance, Unsecured
 The minimum to run a NiFi Registry instance is as follows (compose: [docker-compose.simple.yml](docker-compose.simple.yml)):
@@ -569,12 +577,10 @@ Example docker run command:
 In some environments, like `docker-compose`  or Kubernetes, it may be useful to provide
 configuration files directly from outside without modifications on them using environment variables.
 
-This setup is also supported under these cirmcumstances:
-1. `nifi-registry.properties` is templated from environmental variables iff any variable named NIFI_REGISTRY* is set
-2. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
-3. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
-4. `providers.xml` is templated iff `FLOW_PROVIDER` is set
-5. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
+To provide all needed configuration files as volumes from outside, grab the image label `-plain`. These images do not have any templating in startup script.  
+You have to provide all files or the upstream defaults are used. You may also mount the whole `./conf` directory.
+
+Plain images do not setup user `nifi` and group `nifi`. You may want to set it up yourself, see [Running under different UID:GID](#running-under-different-uidgid).
 
 Example:
 ```
@@ -586,7 +592,7 @@ Example:
       -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
       -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:latest
+      michalklempa/nifi-registry:0.5.0-plain
 ```
 
 ## Running under different UID:GID
@@ -595,7 +601,7 @@ This may cause problems when binding or mounting volumes to the container.
 Usually, one needs to have exacts same UID:GID on host machine as is used inside container.
 
 ### Running as root
-You may want to run the image under `root` user, for this purpose, use the images labeled `.default`:
+You may want to run the image under `root` user, for this purpose, use the images labeled `default`:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
