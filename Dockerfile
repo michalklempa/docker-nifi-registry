@@ -19,8 +19,9 @@ ENV DOCKERIZE_VERSION v0.6.1
 
 # Download, validate, and expand Apache NiFi-Registry binary.
 RUN mkdir -p ${PROJECT_BASE_DIR} \
-    && curl -fSL ${MIRROR}/${UPSTREAM_BINARY_URL} -o ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz \
-    && echo "$(curl ${MIRROR}/${UPSTREAM_BINARY_URL}.sha256) *${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz" | sha256sum -c - \
+    && curl -fSL ${MIRROR}/${UPSTREAM_BINARY_URL} -o ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz 
+RUN cd ${PROJECT_BASE_DIR} \
+    && echo "$(curl ${MIRROR}/${UPSTREAM_BINARY_URL}.sha256)" | sha256sum -c - \
     && tar -xvzf ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz -C ${PROJECT_BASE_DIR} \
     && rm ${PROJECT_BASE_DIR}/nifi-registry-${UPSTREAM_VERSION}-bin.tar.gz \
     && rm -fr ${PROJECT_HOME}/docs
