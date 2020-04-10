@@ -21,7 +21,7 @@ This README.md is trimmed by hub.docker.com. Full version:
 
 ## Project home
  - Image: [https://hub.docker.com/r/michalklempa/nifi-registry](https://hub.docker.com/r/michalklempa/nifi-registry)
- - Source code: [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
+-  Source code: [http://github.com/michalklempa/docker-nifi-registry/](http://github.com/michalklempa/docker-nifi-registry/)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -30,6 +30,7 @@ This README.md is trimmed by hub.docker.com. Full version:
 - [Notice](#notice)
 - [Capabilities](#capabilities)
 - [Environment variables templating into nifi-registry.properties](#environment-variables-templating-into-nifi-registryproperties)
+- [Templating conditions](#templating-conditions)
 - [Running and configuring a container](#running-and-configuring-a-container)
   - [Standalone Instance, Unsecured](#standalone-instance-unsecured)
   - [Java Heap Options and other properties in bootstrap.conf](#java-heap-options-and-other-properties-in-bootstrapconf)
@@ -64,7 +65,8 @@ This README.md is trimmed by hub.docker.com. Full version:
   - [Running as custom UID:GID](#running-as-custom-uidgid)
 - [Building](#building)
 - [Contributing](#contributing)
-- [Building 0.5.0-SNAPSHOT](#building-050-snapshot)
+- [Building Release Candindates](#building-release-candindates)
+- [Building 1.0.0-SNAPSHOT](#building-100-snapshot)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -72,21 +74,22 @@ This README.md is trimmed by hub.docker.com. Full version:
 This image is inspired by the official image: [apache/nifi-registry](https://hub.docker.com/r/apache/nifi-registry).
 The configuration capabilities and options are taken from that image (see the copyright [NOTICE](NOTICE) and [LICENSE](LICENSE)).
 
-The way the image is configured at runtime is reworked to use [Go templates](https://golang.org/pkg/text/template/) 
+The way the image is configured at runtime is reworked to use [Go templates](https://golang.org/pkg/text/template/)
 and the runtime fork & logs capture is handled by [dockerize](https://github.com/jwilder/dockerize).
 
 Image is based on [openjdk:8-jdk-alpine](https://hub.docker.com/_/openjdk).
 It is also smaller than the official one (251MB vs. 387MB).
 
-The configuration environment variables are different, so this image is not a drop-in replacement for the official one.
-Read the documentation below. We have included the original names in this readme for the convenience, but these are **NOT** supported by this image.
-Update your launch scripts accordingly. 
+The dockerhub hook scripts are attributed to [jnovack/dockerhub-hooks](https://github.com/jnovack/dockerhub-hooks).
+
+The configuration environment variables are different, so this image is not a drop-in replacement for the official one. Read the documentation below. We have included the original
+names in this readme for the convenience, but these are **NOT** supported by this image. Update your launch scripts accordingly.
 
 ## Capabilities
 This image currently supports running in standalone mode either unsecured or with user authentication provided through:
    * [Two-Way SSL with Client Certificates](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#security-configuration)
    * [Lightweight Directory Access Protocol (LDAP)](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#ldap_identity_provider)
-   * [Kerberos](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#kerberos_identity_provider) 
+   * [Kerberos](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#kerberos_identity_provider)
 
 ## Environment variables templating into nifi-registry.properties
 All environment variables are templated into `conf/nifi-registry.properties` values
@@ -108,6 +111,14 @@ Do not name your own environment variables with prefix `NIFI_REGISTRY`, they wil
 
 Image provides additional environmental variables to configure `authorizers.xml`, `identity-providers.xml` and `providers.xml`.
 These are described below.
+
+##  Templating conditions
+1. `nifi-registry.properties` is templated from environmental variables iff any variable named NIFI_REGISTRY* is set
+3. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
+4. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
+5. `providers.xml` is templated iff `FLOW_PROVIDER` is set (this is always set by default, you have to set it to empty string). e.g. `-e 'FLOW_PROVIDER='`, see
+   https://github.com/michalklempa/docker-nifi-registry/issues/20).
+6. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
 
 ## Running and configuring a container
 ### Standalone Instance, Unsecured
@@ -148,7 +159,7 @@ variables prefixed with `BOOTSTRAP_`.
 For details, read the [templates/bootstrap.conf.gotemplate](templates/bootstrap.conf.gotemplate) file.
 
 ### Standalone Instance, Java Remote Debug
-To attach your IDE for Java Remote Debugging, run: 
+To attach your IDE for Java Remote Debugging, run:
 ```
     docker run --name nifi-registry \
       -p 8000:8000 \
@@ -255,7 +266,7 @@ For a minimal, connection to an LDAP server using SIMPLE authentication:
       michalklempa/nifi-registry:latest
 ```
 
-Security properties are set as described at 
+Security properties are set as described at
 [Lightweight Directory Access Protocol (LDAP)](https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#ldap_login_identity_provider) section of [NiFi System Administrator’s Guide](https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html) and [Security Properties](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#security-properties) section of [Apache NiFi Registry System Administrator’s Guide](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html)
 
 Specifically two properties are set:
@@ -306,9 +317,9 @@ This example as compose: [docker-compose.kerberos.yml](docker-compose.kerberos.y
       michalklempa/nifi-registry:latest
 ```
 
-Security properties are set as described at 
+Security properties are set as described at
 [Kerberos](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#kerberos_identity_provider) section of [Apache NiFi Registry System Administrator’s Guide](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html).
-You may also want to set some of the [Kerberos Properties](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#kerberos_properties) in `nifi-registry.properties` file. 
+You may also want to set some of the [Kerberos Properties](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#kerberos_properties) in `nifi-registry.properties` file.
 
 Specifically two properties are set:
 
@@ -321,7 +332,7 @@ Specifically two properties are set:
 
 Kerberos environment variables are rendered into `conf/identity-providers.xml` file as follows:
 
-#### identity-providers.xml 
+#### identity-providers.xml
 
 | identity-providers.xml property | Environment variable               | Official image variable | Default Value   | Description                                                                                 |
 |---------------------------------|------------------------------------|-------------------------|-----------------|---------------------------------------------------------------------------------------------|
@@ -436,7 +447,7 @@ Example docker run command:
       -d \
       michalklempa/nifi-registry:latest
 ```
-Image will run at startup. Credential helper hack (https://stackoverflow.com/a/43022442/3944551) is run only if `FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD` is set.  
+Image will run at startup. Credential helper hack (https://stackoverflow.com/a/43022442/3944551) is run only if `FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD` is set.
 ```
     git config --global credential.${GIT_REMOTE_URL}.helper '!f() { sleep 1; echo -e "username=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER}\npassword=${FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD}"; }; f'
     git clone -o $FLOW_PROVIDER_GIT_REMOTE_TO_PUSH -b $GIT_CHECKOUT_BRANCH $GIT_REMOTE_URL $FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY
@@ -445,7 +456,7 @@ Image will run at startup. Credential helper hack (https://stackoverflow.com/a/4
 ```
 
 ### Cloning using GIT+SSH
-To clone repository using git+ssh scheme either set these properties, or mount `.ssh` into `/home/nifi/.ssh`: 
+To clone repository using git+ssh scheme either set these properties, or mount `.ssh` into `/home/nifi/.ssh`:
 
 #### SSH keys using environemnt variables
 *Note*: At the time being, the `SSH_PRIVATE_KEY_PASSPHRASE` is used by image when cloning the git
@@ -487,7 +498,7 @@ Example docker run command:
       -d \
       michalklempa/nifi-registry:latest
 ```
-Image will run at startup: 
+Image will run at startup:
 ```
     echo -n ${SSH_PRIVATE_KEY} | base64 -d > $SSH_PRIVATE_KEY_FILE && chmod 600 $SSH_PRIVATE_KEY_FILE
     ssh-keygen ${SSH_PRIVATE_KEY_PASSPHRASE:+'-P' "${SSH_PRIVATE_KEY_PASSPHRASE}"} -y -f $SSH_PRIVATE_KEY_FILE > ${SSH_PRIVATE_KEY_FILE}.pub && chmod 600 ${SSH_PRIVATE_KEY_FILE}.pub
@@ -532,7 +543,7 @@ Configuring NiFi Registry FileSystemBundlePersistenceProvider needs just one var
 
 | providers.xml property             | Environment variable                                              | Official image variable            | Default Value                               | Description                                                                                                                                                                                                                                                                                                                                      |
 |------------------------------------|-------------------------------------------------------------------|------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Extension Bundle Storage Directory | EXTENSION_BUNDLE_PROVIDER_FILE_EXTENSION_BUNDLE_STORAGE_DIRECTORY | ~~NIFI_REGISTRY_BUNDLE_STORAGE_DIR~~ | /opt/nifi-registry/extension-bundle-storage | Default value is set by image, original default value was "./extension_bundles". REQUIRED: File system path for a directory where extension bundle contents files are persisted to. If the directory does not exist when NiFi Registry starts, it will be created. If the directory exists, it must be readable and writable from NiFi Registry. | 
+| Extension Bundle Storage Directory | EXTENSION_BUNDLE_PROVIDER_FILE_EXTENSION_BUNDLE_STORAGE_DIRECTORY | ~~NIFI_REGISTRY_BUNDLE_STORAGE_DIR~~ | /opt/nifi-registry/extension-bundle-storage | Default value is set by image, original default value was "./extension_bundles". REQUIRED: File system path for a directory where extension bundle contents files are persisted to. If the directory does not exist when NiFi Registry starts, it will be created. If the directory exists, it must be readable and writable from NiFi Registry. |
 
 ### S3BundlePersistenceProvider
 To configuring NiFi Registry S3BundlePersistenceProvider provide these variables:
@@ -568,12 +579,10 @@ Example docker run command:
 In some environments, like `docker-compose`  or Kubernetes, it may be useful to provide
 configuration files directly from outside without modifications on them using environment variables.
 
-This setup is also supported under these cirmcumstances:
-1. `nifi-registry.properties` is templated from environmental variables iff any variable named NIFI_REGISTRY* is set
-2. `authorizers.xml` is templated iff `INITIAL_ADMIN_IDENTITY` is set
-3. `identity-providers.xml` is templated iff `NIFI_REGISTRY_SECURITY_IDENTITY_PROVIDER` is set
-4. `providers.xml` is templated iff `FLOW_PROVIDER` is set
-5. `bootstrap.conf` is templated iff any variable named BOOTSTRAP_* is set
+To provide all needed configuration files as volumes from outside, grab the image label `-plain`. These images do not have any templating in startup script.  
+You have to provide all files or the upstream defaults are used. You may also mount the whole `./conf` directory.
+
+Plain images do not setup user `nifi` and group `nifi`. You may want to set it up yourself, see [Running under different UID:GID](#running-under-different-uidgid).
 
 Example:
 ```
@@ -585,7 +594,7 @@ Example:
       -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
       -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:latest
+      michalklempa/nifi-registry:0.5.0-plain
 ```
 
 ## Running under different UID:GID
@@ -594,7 +603,7 @@ This may cause problems when binding or mounting volumes to the container.
 Usually, one needs to have exacts same UID:GID on host machine as is used inside container.
 
 ### Running as root
-You may want to run the image under `root` user, for this purpose, use the images labeled `-root`:
+You may want to run the image under `root` user, for this purpose, use the images labeled `default`:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
@@ -604,7 +613,7 @@ You may want to run the image under `root` user, for this purpose, use the image
       -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/identity-providers.xml \
       -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.5.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:latest-root
+      michalklempa/nifi-registry:0.5.0-default
 ```
 
 ### Running as custom UID:GID
@@ -612,7 +621,7 @@ To run using custom UID:GID (other than 1000:1000), you will have to build your 
 image, derived from this one.
 As an example, there is [Docker.user.example](Dockerfile.user.example) file in the repository, with contents:
 ```
-FROM michalklempa/nifi-registry:latest-root
+FROM michalklempa/nifi-registry:0.5.0-default
 ARG UID=1000
 ARG GID=1000
 
@@ -622,8 +631,7 @@ RUN addgroup -g ${GID} nifi \
 USER nifi
 ```
 
-This is derived from base image running under `root` privileges and adding the desired nifi user and group.
-To build such image, use this command:
+This is derived from default image running under `root` privileges and adding the desired nifi user and group. To build such image, use this command:
 ```
 docker build -f Dockerfile.user.example --build-arg UID=2006 --build-arg GID=2006 -t michalklempa/nifi-registry-custom-uid-gid:latest .
 ```
@@ -632,35 +640,31 @@ Change the numbers to whatever you need.
 ## Building
 The Docker image can be built using the following command:
 ```
-$ docker build \
-    --build-arg VERSION=$(git describe --tags --always) \
-    --build-arg COMMIT=$(git rev-parse HEAD) \
-    --build-arg URL=$(git config --get remote.origin.url) \
-    --build-arg BRANCH=$(git rev-parse --abbrev-ref HEAD) \
-    --build-arg DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-    -f Dockerfile \
-    -t michalklempa/nifi-registry:latest .
+export DOCKER_TAG=0.5.0-02.plain
+export UPSTREAM_VERSION=0.5.0
+export MIRROR=https://archive.apache.org/dist
+export DOCKERFILE_PATH=Dockerfile
+export DOCKER_REPO=michalklempa/nifi-registry
+./hooks/build
 ```
 
 This will result in an image tagged michalklempa/nifi-registry:latest
 ```
 $ docker image ls
-REPOSITORY                   TAG                 IMAGE ID            CREATED             SIZE
-michalklempa/nifi-registry   latest              945ff5472a69        11 hours ago        233MB
+REPOSITORY                   TAG                         IMAGE ID            CREATED             SIZE
+michalklempa/nifi-registry   0.5.0-02.plain              945ff5472a69        11 hours ago        233MB
 ```
-    
+
 **Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.5.0).
 To build an image for a prior released version, one can override the `UPSTREAM_VERSION` build-arg with the following command:
 ```
-$ docker build \
-    --build-arg VERSION=$(git describe --tags --always) \
-    --build-arg COMMIT=$(git rev-parse HEAD) \
-    --build-arg URL=$(git config --get remote.origin.url) \
-    --build-arg BRANCH=$(git rev-parse --abbrev-ref HEAD) \
-    --build-arg DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-    --build-arg UPSTREAM_VERSION={Desired NiFi Registry Version} \
-    -f Dockerfile \
-    -t michalklempa/nifi-registry:latest .
+export DOCKER_TAG={Desired NiFi Registry Version}-01.plain
+export UPSTREAM_VERSION={Desired NiFi Registry Version}
+export MIRROR=https://archive.apache.org/dist
+export DOCKERFILE_PATH=Dockerfile
+export DOCKER_REPO=michalklempa/nifi-registry
+
+./hooks/build
 ```
 There is, however, no guarantee that older versions will work as properties have changed and evolved with subsequent releases.
 
@@ -679,6 +683,41 @@ Table of contents is generated using:
 ```
 doctoc README.md
 ```
+
+## Building Release Candindates
+To build a release candidate, we first build from source distribution. This way we obtain:
+```
+./nifi-assembly/target/nifi-registry-0.6.0-bin.tar.gz
+```
+Lets setup directory structure as it is at Apache mirror sites:
+```
+mkdir -p ./nifi/nifi-registry/nifi-registry-0.6.0
+```
+And move the tar.gz there:
+```
+mv ./nifi-assembly/target/nifi-registry-0.6.0-bin.tar.gz ./nifi/nifi-registry/nifi-registry-0.6.0/
+```
+Lets create the sha256 file needed:
+```
+sha256sum ./nifi/nifi-registry/nifi-registry-0.6.0/nifi-registry-0.6.0-bin.tar.gz > ./nifi/nifi-registry/nifi-registry-0.6.0/nifi-registry-0.6.0-bin.tar.gz.sha256
+```
+
+To provide this fake mirror into build process locally, we spin up `nginx` docker image:
+```
+docker run -v $PWD:/usr/share/nginx/html -p 8080:80 nginx
+```
+
+When building the Release Candidate docker image, we spoof the mirror (exact IP address depends on your `docker0` network device) and adjust docker tag:
+```
+export DOCKER_TAG=0.6.0_RC1-01.plain
+export UPSTREAM_VERSION=0.6.0
+export MIRROR=http://172.17.0.1:8080/
+export DOCKERFILE_PATH=Dockerfile
+export DOCKER_REPO=michalklempa/nifi-registry
+
+./hooks/build
+```
+
 ## Building 1.0.0-SNAPSHOT
 Built from [32100bd5e5a49787acb1694cd9751dd1169e6fe7](https://github.com/apache/nifi-registry/commit/32100bd5e5a49787acb1694cd9751dd1169e6fe7):
 ```
@@ -690,4 +729,4 @@ docker build \
   --build-arg DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   -f Dockerfile.master \
   -t michalklempa/nifi-registry:1.0.0-SNAPSHOT .
-```
+````
