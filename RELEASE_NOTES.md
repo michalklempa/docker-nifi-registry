@@ -1,18 +1,3 @@
-<!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
-
 # Unofficial Docker Image For NiFi Registry
 
 ## Release notes
@@ -30,3 +15,12 @@
 
 ## NiFi Registry 0.5.0 
  - Added templating for [org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider](README.md#) 
+
+## NiFi Registry 0.5.0 (0.5.0-03.plain and 0.5.0-03)
+ - Added -plain flavored images, these do not set UIG:GID (nifi:nifi) and do not render any config templates. Suitable for k8s deployments.
+
+## NiFi Registry 0.6.0
+ - Added -plain, -default flavored images
+    - 0.6.0-plain: no UID:GID set (running as root), env var templating TURNED OFF.
+    - 0.6.0-default: no UID:GID set (running as root), ENV var templaping is done
+    - 0.6.0: UID:GID set to nifi:nifi (1000:1000), ENV var templaping is done 
