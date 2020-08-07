@@ -22,5 +22,8 @@
 ## NiFi Registry 0.6.0
  - Added -plain, -default flavored images
     - 0.6.0-plain: no UID:GID set (running as root), env var templating TURNED OFF.
-    - 0.6.0-default: no UID:GID set (running as root), ENV var templaping is done
-    - 0.6.0: UID:GID set to nifi:nifi (1000:1000), ENV var templaping is done 
+    - 0.6.0-default: no UID:GID set (running as root), ENV var templating is done
+    - 0.6.0: UID:GID set to nifi:nifi (1000:1000), ENV var templating is done 
+
+## NiFi Registry 0.7.0
+ - upstream added possibility to clone repo (default branch), which we kindly ignore

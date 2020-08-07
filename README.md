@@ -412,12 +412,13 @@ Configuring NiFi Registry FileSystemFlowPersistenceProvider needs just one varia
 ### GitFlowPersistenceProvider
 To configure NiFi Registry [GitFlowPersistenceProvider](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#gitflowpersistenceprovider) provide these variables:
 
-| providers.xml property | Environment variable                     | Official image variable            | Default Value                   | Description                                                                                                                                                                                                                                                                                                                                                                                  |
-|------------------------|------------------------------------------|------------------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Flow Storage Directory | FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY | ~~NIFI_REGISTRY_FLOW_STORAGE_DIR~~ | /opt/nifi-registry/flow-storage | Default value is set by image, original default value was "./flow-storage". REQUIRED: File system path for a directory where flow contents files are persisted to. The directory must exist when NiFi registry starts. Also must be initialized as a Git directory. See Initialize Git directory for detail.                                                                                 |
-| Remote To Push         | FLOW_PROVIDER_GIT_REMOTE_TO_PUSH         | ~~NIFI_REGISTRY_GIT_REMOTE~~       | (empty)                         | When a new flow snapshot is created, this persistence provider updated files in the specified Git directory, then create a commit to the local repository. If Remote To Push is defined, it also pushes to the specified remote repository. E.g. origin. To define more detailed remote spec such as branch names, use Refspec. See https://git-scm.com/book/en/v2/Git-Internals-The-Refspec |
-| Remote Access User     | FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER     | ~~NIFI_REGISTRY_GIT_USER~~         | (empty)                         | This user name is used to make push requests to the remote repository when Remote To Push is enabled, and the remote repository is accessed by HTTP protocol. If SSH is used, user authentication is done with SSH keys.                                                                                                                                                                     |
-| Remote Access Password | FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD | ~~NIFI_REGISTRY_GIT_PASSWORD~~     | (empty)                         | Used with Remote Access User.                                                                                                                                                                                                                                                                                                                                                                |
+| providers.xml property  | Environment variable                      | Official image variable            | Default Value                   | Description                                                                                                                                                                                                                                                                                                                                                                                  |
+|-------------------------|-------------------------------------------|------------------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Flow Storage Directory  | FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY  | ~~NIFI_REGISTRY_FLOW_STORAGE_DIR~~ | /opt/nifi-registry/flow-storage | Default value is set by image, original default value was "./flow-storage". REQUIRED: File system path for a directory where flow contents files are persisted to. The directory must exist when NiFi registry starts. Also must be initialized as a Git directory. See Initialize Git directory for detail.                                                                                 |
+| Remote To Push          | FLOW_PROVIDER_GIT_REMOTE_TO_PUSH          | ~~NIFI_REGISTRY_GIT_REMOTE~~       | (empty)                         | When a new flow snapshot is created, this persistence provider updated files in the specified Git directory, then create a commit to the local repository. If Remote To Push is defined, it also pushes to the specified remote repository. E.g. origin. To define more detailed remote spec such as branch names, use Refspec. See https://git-scm.com/book/en/v2/Git-Internals-The-Refspec |
+| Remote Access User      | FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER      | ~~NIFI_REGISTRY_GIT_USER~~         | (empty)                         | This user name is used to make push requests to the remote repository when Remote To Push is enabled, and the remote repository is accessed by HTTP protocol. If SSH is used, user authentication is done with SSH keys.                                                                                                                                                                     |
+| Remote Access Password  | FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD  | ~~NIFI_REGISTRY_GIT_PASSWORD~~     | (empty)                         | Used with Remote Access User.                                                                                                                                                                                                                                                                                                                                                                |
+| Remote Clone Repository | FLOW_PROVIDER_GIT_REMOTE_CLONE_REPOSITORY |                                    | (empty)                         | Remote repository URI to use to clone into Flow Storage Directory, if local repository is not present in Flow Storage Directory. If left empty the git directory needs to be configured as per Initialize Git directory. If URI is provided then Remote Access User and Remote Access Password also should be present. Currently, default branch of remote will be cloned.                   |
 
 ### DatabaseFlowPersistenceProvider
 NiFi Registry [DatabaseFlowPersistenceProvider](https://nifi.apache.org/docs/nifi-registry-docs/html/administration-guide.html#databaseflowpersistenceprovider) currently does not need any additional configuration.                                                                                                                                                                                                                                                                                                                     |
@@ -662,8 +663,8 @@ Change the numbers to whatever you need.
 ## Building
 The Docker image can be built using the following command:
 ```
-export DOCKER_TAG=0.6.0-04.plain
-export UPSTREAM_VERSION=0.6.0
+export DOCKER_TAG=0.7.0-01.plain
+export UPSTREAM_VERSION=0.7.0
 export MIRROR=https://archive.apache.org/dist
 export DOCKERFILE_PATH=Dockerfile
 export DOCKER_REPO=michalklempa/nifi-registry
@@ -677,7 +678,7 @@ REPOSITORY                   TAG                         IMAGE ID            CRE
 michalklempa/nifi-registry   0.6.0-04.plain              945ff5472a69        11 hours ago        233MB
 ```
 
-**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.6.0).
+**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.7.0).
 To build an image for a prior released version, one can override the `UPSTREAM_VERSION` build-arg with the following command:
 ```
 export DOCKER_TAG={Desired NiFi Registry Version}-01.plain
@@ -706,7 +707,7 @@ Table of contents is generated using:
 doctoc README.md
 ```
 
-## Building Release Candindates
+## Building Release Candidates
 To build a release candidate, we first build from source distribution. This way we obtain:
 ```
 ./nifi-assembly/target/nifi-registry-0.6.0-bin.tar.gz
