@@ -21,36 +21,10 @@
             3) Bundle Persistence Provider (Must occur once and only once)
      -->
 
-    {{ if .Env.FLOW_PROVIDER }}
-    {{ if eq .Env.FLOW_PROVIDER "file" }}
-    <flowPersistenceProvider>
-        <class>org.apache.nifi.registry.provider.flow.FileSystemFlowPersistenceProvider</class>
-        <property name="Flow Storage Directory">{{ default .Env.FLOW_PROVIDER_FILE_FLOW_STORAGE_DIRECTORY "./flow_storage" }}</property>
-    </flowPersistenceProvider>
-    {{ end }}
-    {{ if eq .Env.FLOW_PROVIDER "git" }}
-    <flowPersistenceProvider>
-        <class>org.apache.nifi.registry.provider.flow.git.GitFlowPersistenceProvider</class>
-        <property name="Flow Storage Directory">{{ default .Env.FLOW_PROVIDER_GIT_FLOW_STORAGE_DIRECTORY "./flow_storage" }}</property>
-        <property name="Remote To Push">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_TO_PUSH "" }}</property>
-        <property name="Remote Access User">{{ default .Env.FLOW_PROVIDER_GIT_REMOTE_ACCESS_USER "" }}</property>
-        <property name="Remote Access Password">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_ACCESS_PASSWORD "" }}</property>
-        <property name="Remote Clone Repository">{{  default .Env.FLOW_PROVIDER_GIT_REMOTE_CLONE_REPOSITORY "" }}</property>
-    </flowPersistenceProvider>
-    {{ end }}
-    {{ if eq .Env.FLOW_PROVIDER "database" }}
-    <flowPersistenceProvider>
-        <class>org.apache.nifi.registry.provider.flow.DatabaseFlowPersistenceProvider</class>
-    </flowPersistenceProvider>
-    {{ end }}
-    {{ end }}
-
-    <!--
     <flowPersistenceProvider>
         <class>org.apache.nifi.registry.provider.flow.FileSystemFlowPersistenceProvider</class>
         <property name="Flow Storage Directory">./flow_storage</property>
     </flowPersistenceProvider>
-    -->
 
     <!--
     <flowPersistenceProvider>
@@ -90,33 +64,10 @@
     </eventHookProvider>
     -->
 
-    {{ if .Env.EXTENSION_BUNDLE_PROVIDER }}
-    {{ if eq .Env.EXTENSION_BUNDLE_PROVIDER "file" }}
-    <extensionBundlePersistenceProvider>
-        <class>org.apache.nifi.registry.provider.extension.FileSystemBundlePersistenceProvider</class>
-        <property name="Extension Bundle Storage Directory">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_FILE_EXTENSION_BUNDLE_STORAGE_DIRECTORY "./extension_bundles" }}</property>
-    </extensionBundlePersistenceProvider>
-    {{ end }}
-    {{ if eq .Env.EXTENSION_BUNDLE_PROVIDER "s3" }}
-    <extensionBundlePersistenceProvider>
-        <class>org.apache.nifi.registry.aws.S3BundlePersistenceProvider</class>
-        <property name="Region">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_REGION "" }}</property>
-        <property name="Bucket Name">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_BUCKET_NAME "" }}</property>
-        <property name="Key Prefix">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_KEY_PREFIX "" }}</property>
-        <property name="Credentials Provider">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_CREDENTIALS_PROVIDER "DEFAULT_CHAIN" }}</property>
-        <property name="Access Key">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_ACCESS_KEY "" }}</property>
-        <property name="Secret Access Key">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_SECRET_ACCESS_KEY "" }}</property>
-        <property name="Endpoint URL">{{ default .Env.EXTENSION_BUNDLE_PROVIDER_S3_ENDPOINT_URL "" }}</property>
-    </extensionBundlePersistenceProvider>
-    {{ end }}
-    {{ end }}
-
-    <!--
     <extensionBundlePersistenceProvider>
         <class>org.apache.nifi.registry.provider.extension.FileSystemBundlePersistenceProvider</class>
         <property name="Extension Bundle Storage Directory">./extension_bundles</property>
     </extensionBundlePersistenceProvider>
-    -->
 
     <!-- Example S3 Bundle Persistence Provider
             - Requires nifi-registry-aws-assembly to be added to the classpath via a custom extension dir in nifi-registry.properties

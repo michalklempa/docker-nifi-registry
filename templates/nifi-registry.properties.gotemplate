@@ -133,6 +133,14 @@ nifi.registry.kerberos.spnego.principal={{ default .Env.NIFI_REGISTRY_KERBEROS_S
 nifi.registry.kerberos.spnego.keytab.location={{ default .Env.NIFI_REGISTRY_KERBEROS_SPNEGO_KEYTAB_LOCATION "" }}
 nifi.registry.kerberos.spnego.authentication.expiration={{ default .Env.NIFI_REGISTRY_KERBEROS_SPNEGO_AUTHENTICATION_EXPIRATION "12 hours" }}
 
+# OIDC #
+nifi.registry.security.user.oidc.discovery.url={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_DISCOVERY_URL "" }}
+nifi.registry.security.user.oidc.connect.timeout={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_CONNECT_TIMEOUT "" }}
+nifi.registry.security.user.oidc.read.timeout={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_READ_TIMEOUT "" }}
+nifi.registry.security.user.oidc.client.id={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_CLIENT_ID "" }}
+nifi.registry.security.user.oidc.client.secret={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_CLIENT_SECRET "" }}
+nifi.registry.security.user.oidc.preferred.jwsalgorithm={{ default .Env.NIFI_REGISTRY_SECURITY_USER_OIDC_PREFERRED_JWSALGORITHM "" }}
+
 # revision management #
 # This feature should remain disabled until a future NiFi release that supports the revision API changes
 nifi.registry.revisions.enabled={{ default .Env.NIFI_REGISTRY_REVISIONS_ENABLED "false" }}
