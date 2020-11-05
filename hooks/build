@@ -22,7 +22,7 @@ docker build \
     --build-arg BUILD_RFC3339='"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"' \
     --build-arg COMMIT=$(git rev-parse --short HEAD) \
     --build-arg VERSION=$(git describe --tags --always) \
-    --build-arg UPSTREAM_VERSION=${UPSTREAM_VERSION:-0.6.0} \
+    --build-arg UPSTREAM_VERSION=${UPSTREAM_VERSION:-0.8.0} \
     --build-arg 'MIRROR='"${MIRROR:-https://archive.apache.org/dist}"'' \
     --target ${FLAVOUR:-defaultuser} \
     -f $DOCKERFILE_PATH \
