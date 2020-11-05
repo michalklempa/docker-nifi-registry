@@ -27,3 +27,16 @@
 
 ## NiFi Registry 0.7.0
  - upstream added possibility to clone repo (default branch), which we kindly ignore
+
+## NiFi Registry 0.8.0
+ - new `nifi-registry.properties`:
+  ```
+# OIDC #
+nifi.registry.security.user.oidc.discovery.url=
+nifi.registry.security.user.oidc.connect.timeout=
+nifi.registry.security.user.oidc.read.timeout=
+nifi.registry.security.user.oidc.client.id=
+nifi.registry.security.user.oidc.client.secret=
+nifi.registry.security.user.oidc.preferred.jwsalgorithm=
+  ```
+ - new `DatabaseUserGroupProvider` in `authorizers.xml`, since we do not template this file, we ignore

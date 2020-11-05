@@ -95,17 +95,17 @@ This image currently supports running in standalone mode either unsecured or wit
 ## Image flavours
 Since 0.5.0, there are several flavours of the image depending on the tag you choose.
 Versioning is as follows. Every release is tagged with version: <upstream-version>-<packaging-version.<flavour>.
-Upstream versions currently are: 0.4.0, 0.5.0, 0.6.0 and 0.7.0. For every version, we tag also the shortened form: 0.6 and 0.7 respectively and also update a tag '0'.
+Upstream versions currently are: 0.4.0, 0.5.0, 0.6.0, 0.7.0 and 0.8.0. For every version, we tag also the shortened form: 0.6 and 0.7 respectively and also update a tag '0'.
 
-So you can choose, to use image for example: 0.7.0-03.plain, which is upstream 0.7.0, third re-packaging attempt (maybe some packaging bugs, see the changelog) and flavour _plain_.
+So you can choose, to use image for example: 0.8.0-03.plain, which is upstream 0.8.0, third re-packaging attempt (maybe some packaging bugs, see the changelog) and flavour _plain_.
 
 Flavours:
  - plain: no UID:GID set (running as root), env var templating TURNED OFF.
-   Example tag: 0.7.0-plain. Environmental variables regarding the git cloning are used, but no configuration files are overwritten by startup scripts.
+   Example tag: 0.8.0-plain. Environmental variables regarding the git cloning are used, but no configuration files are overwritten by startup scripts.
    You have to provide configuration files by mounting from outside.
    Useful for kubernetes deployment with configuration provided as mounted files or config maps, see [Providing configuration by mounting files](#providing-configuration-by-mounting-files)
  - default: no UID:GID set (running as root), ENV var templaping is turned ON. 
-   Example tag: 0.7.0-default.
+   Example tag: 0.8.0-default.
    In version 0.4.0 this was the `-root` flavored image.
    Running under root privileges, but all env vars are template rendered as described in this documentation. 
  - no flavour indicator: UID:GID set to nifi:nifi (1000:1000), ENV variables templating is ON.
@@ -610,13 +610,13 @@ Example:
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.7.0/conf/bootstrap.conf \
-      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.7.0/conf/nifi-registry.properties \
-      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/authorizers.xml \
-      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/identity-providers.xml \
-      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.8.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.8.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:0.7.0-plain
+      michalklempa/nifi-registry:0.8.0-plain
 ```
 
 ## Running under different UID:GID
@@ -629,13 +629,13 @@ You may want to run the image under `root` user, for this purpose, use the image
 ```
  docker run --name nifi-registry \
       -p 18080:18080 \
-      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.7.0/conf/bootstrap.conf \
-      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.7.0/conf/nifi-registry.properties \
-      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/authorizers.xml \
-      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/identity-providers.xml \
-      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.7.0/conf/providers.xml \
+      -v $PWD/conf/bootstrap.conf:/opt/nifi-registry/nifi-registry-0.8.0/conf/bootstrap.conf \
+      -v $PWD/conf/nifi-registry.properties:/opt/nifi-registry/nifi-registry-0.8.0/conf/nifi-registry.properties \
+      -v $PWD/conf/authorizers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/authorizers.xml \
+      -v $PWD/conf/identity-providers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/identity-providers.xml \
+      -v $PWD/conf/providers.xml:/opt/nifi-registry/nifi-registry-0.8.0/conf/providers.xml \
       -d \
-      michalklempa/nifi-registry:0.7.0-default
+      michalklempa/nifi-registry:0.8.0-default
 ```
 To understand all the image flavours, jump to [Image flavours](#image-flavours).
 
@@ -644,7 +644,7 @@ To run using custom UID:GID (other than 1000:1000), you will have to build your 
 image, derived from this one.
 As an example, there is [Docker.user.example](Dockerfile.user.example) file in the repository, with contents:
 ```
-FROM michalklempa/nifi-registry:0.7.0-default
+FROM michalklempa/nifi-registry:0.8.0-default
 ARG UID=1000
 ARG GID=1000
 
@@ -663,8 +663,8 @@ Change the numbers to whatever you need.
 ## Building
 The Docker image can be built using the following command:
 ```
-export DOCKER_TAG=0.7.0-01.plain
-export UPSTREAM_VERSION=0.7.0
+export DOCKER_TAG=0.8.0-01.plain
+export UPSTREAM_VERSION=0.8.0
 export MIRROR=https://archive.apache.org/dist
 export DOCKERFILE_PATH=Dockerfile
 export DOCKER_REPO=michalklempa/nifi-registry
@@ -675,10 +675,10 @@ This will result in an image tagged michalklempa/nifi-registry:latest
 ```
 $ docker image ls
 REPOSITORY                   TAG                         IMAGE ID            CREATED             SIZE
-michalklempa/nifi-registry   0.7.0-01.plain              945ff5472a69        11 hours ago        233MB
+michalklempa/nifi-registry   0.8.0-01.plain              945ff5472a69        11 hours ago        233MB
 ```
 
-**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.7.0).
+**Note**: The default version of NiFi Registry specified by the Dockerfile is typically last released version (current: 0.8.0).
 To build an image for a prior released version, one can override the `UPSTREAM_VERSION` build-arg with the following command:
 ```
 export DOCKER_TAG={Desired NiFi Registry Version}-01.plain
@@ -710,19 +710,19 @@ doctoc README.md
 ## Building Release Candidates
 To build a release candidate, we first build from source distribution. This way we obtain:
 ```
-./nifi-assembly/target/nifi-registry-0.7.0-bin.tar.gz
+./nifi-assembly/target/nifi-registry-0.8.0-bin.tar.gz
 ```
 Lets setup directory structure as it is at Apache mirror sites:
 ```
-mkdir -p ./nifi/nifi-registry/nifi-registry-0.7.0
+mkdir -p ./nifi/nifi-registry/nifi-registry-0.8.0
 ```
 And move the tar.gz there:
 ```
-mv ./nifi-assembly/target/nifi-registry-0.7.0-bin.tar.gz ./nifi/nifi-registry/nifi-registry-0.7.0/
+mv ./nifi-assembly/target/nifi-registry-0.8.0-bin.tar.gz ./nifi/nifi-registry/nifi-registry-0.8.0/
 ```
 Lets create the sha256 file needed:
 ```
-sha256sum ./nifi/nifi-registry/nifi-registry-0.7.0/nifi-registry-0.7.0-bin.tar.gz > ./nifi/nifi-registry/nifi-registry-0.7.0/nifi-registry-0.7.0-bin.tar.gz.sha256
+sha256sum ./nifi/nifi-registry/nifi-registry-0.8.0/nifi-registry-0.8.0-bin.tar.gz > ./nifi/nifi-registry/nifi-registry-0.8.0/nifi-registry-0.8.0-bin.tar.gz.sha256
 ```
 
 To provide this fake mirror into build process locally, we spin up `nginx` docker image:
@@ -732,8 +732,8 @@ docker run -v $PWD:/usr/share/nginx/html -p 8080:80 nginx
 
 When building the Release Candidate docker image, we spoof the mirror (exact IP address depends on your `docker0` network device) and adjust docker tag:
 ```
-export DOCKER_TAG=0.7.0_RC1-01.plain
-export UPSTREAM_VERSION=0.7.0
+export DOCKER_TAG=0.8.0_RC1-01.plain
+export UPSTREAM_VERSION=0.8.0
 export MIRROR=http://172.17.0.1:8080/
 export DOCKERFILE_PATH=Dockerfile
 export DOCKER_REPO=michalklempa/nifi-registry
